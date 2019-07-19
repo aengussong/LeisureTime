@@ -6,8 +6,7 @@ import java.util.*
 
 @Entity
 data class LeisureEntity(
-    @PrimaryKey(autoGenerate = true)
-    val id: Int,
+    @PrimaryKey
     val name: String,
     val counter: Int,
     val updated: Date

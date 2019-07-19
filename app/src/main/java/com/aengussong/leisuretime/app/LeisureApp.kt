@@ -8,9 +8,7 @@ import com.aengussong.leisuretime.data.LeisureDb
 
 class LeisureApp: Application() {
     companion object{
-        lateinit var db:RoomDatabase
-
-        fun getDatabase():RoomDatabase = db
+        lateinit var db:LeisureDb
     }
 
     override fun onCreate() {
