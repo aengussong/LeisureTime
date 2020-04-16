@@ -1,19 +1,24 @@
 package com.aengussong.leisuretime.app
 
 import android.app.Application
-import androidx.room.RoomDatabase
 import androidx.room.Room
 import com.aengussong.leisuretime.data.LeisureDb
+import com.aengussong.leisuretime.di.dataModule
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
 
 
-class LeisureApp: Application() {
-    companion object{
-        lateinit var db:LeisureDb
-    }
+class LeisureApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        db = Room.databaseBuilder(
+
+        startKoin {
+            androidContext(this@LeisureApp)
+            modules(dataModule)
+        }
+
+        val db = Room.databaseBuilder(
             this,
             LeisureDb::class.java, "leisure_db"
         ).build()
