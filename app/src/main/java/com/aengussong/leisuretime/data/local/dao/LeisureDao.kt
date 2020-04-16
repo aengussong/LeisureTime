@@ -1,10 +1,10 @@
-package com.aengussong.leisuretime.data.dao
+package com.aengussong.leisuretime.data.local.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import com.aengussong.leisuretime.data.entity.LeisureEntity
+import com.aengussong.leisuretime.data.local.entity.LeisureEntity
 import java.util.*
 
 @Dao

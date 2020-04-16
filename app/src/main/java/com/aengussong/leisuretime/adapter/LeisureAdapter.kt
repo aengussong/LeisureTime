@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.aengussong.leisuretime.data.entity.LeisureEntity
+import com.aengussong.leisuretime.data.local.entity.LeisureEntity
 import androidx.recyclerview.widget.DiffUtil
 import com.aengussong.leisuretime.R
 

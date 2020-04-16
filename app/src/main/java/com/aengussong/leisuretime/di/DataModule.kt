@@ -1,13 +1,15 @@
 package com.aengussong.leisuretime.di
 
 import com.aengussong.leisuretime.LeisureDataViewModel
-import com.aengussong.leisuretime.ui.MainActivity
+import com.aengussong.leisuretime.data.LeisureRepository
+import com.aengussong.leisuretime.data.LeisureRepositoryImpl
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val dataModule = module {
+    single<LeisureRepository> { LeisureRepositoryImpl() }
+}
 
-    scope<MainActivity> {
-        viewModel { LeisureDataViewModel() }
-    }
+val viewModelModule = module {
+    viewModel { LeisureDataViewModel() }
 }

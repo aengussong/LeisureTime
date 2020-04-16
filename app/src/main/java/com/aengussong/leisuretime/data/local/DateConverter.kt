@@ -1,4 +1,4 @@
-package com.aengussong.leisuretime.data
+package com.aengussong.leisuretime.data.local
 
 import androidx.room.TypeConverter
 import java.util.*

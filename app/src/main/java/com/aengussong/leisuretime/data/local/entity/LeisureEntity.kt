@@ -1,4 +1,4 @@
-package com.aengussong.leisuretime.data.entity
+package com.aengussong.leisuretime.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -8,6 +8,6 @@ import java.util.*
 data class LeisureEntity(
     @PrimaryKey
     val name: String,
-    val counter: Int,
-    val updated: Date
+    val counter: Int = 0,
+    val updated: Date = Date()
 )

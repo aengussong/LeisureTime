@@ -30,11 +30,11 @@ class MainActivity : AppCompatActivity() {
         recycler_view.adapter = adapter
 
         adapter.onClickListener = View.OnClickListener { v ->
-            val position = recycler_view.getChildAdapterPosition(v)
-            val leisureEntity = adapter.list[position]
-            Observable.fromCallable {
-                LeisureApp.db.leisureDao().updateLeisure(leisureEntity.name, leisureEntity.counter + 1)
-            }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).subscribe()
+//            val position = recycler_view.getChildAdapterPosition(v)
+//            val leisureEntity = adapter.list[position]
+//            Observable.fromCallable {
+//                LeisureApp.db.leisureDao().updateLeisure(leisureEntity.name, leisureEntity.counter + 1)
+//            }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).subscribe()
         }
     }
 
@@ -49,8 +49,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun fillRecycler() {
-        LeisureApp.db.leisureDao().getLeisures().observe(this, Observer {
-            adapter.updateList(it)
-        })
+//        LeisureApp.db.leisureDao().getLeisures().observe(this, Observer {
+//            adapter.updateList(it)
+//        })
     }
 }

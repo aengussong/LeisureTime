@@ -1,7 +1,7 @@
 package com.aengussong.leisuretime.adapter
 
 import androidx.recyclerview.widget.DiffUtil
-import com.aengussong.leisuretime.data.entity.LeisureEntity
+import com.aengussong.leisuretime.data.local.entity.LeisureEntity
 
 class LeisureDiffCallback:DiffUtil.Callback(){
 
