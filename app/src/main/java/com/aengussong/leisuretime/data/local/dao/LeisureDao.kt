@@ -5,6 +5,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import com.aengussong.leisuretime.data.local.entity.LeisureEntity
+import io.reactivex.Completable
 import io.reactivex.Single
 import java.util.*
 
@@ -12,7 +13,7 @@ import java.util.*
 interface LeisureDao {
 
     @Insert
-    fun addLeisure(leisure: LeisureEntity)
+    fun addLeisure(leisure: LeisureEntity): Completable
 
     @Query("SELECT * FROM leisureentity WHERE name=:name")
     fun getLeisure(name: String): Single<LeisureEntity>

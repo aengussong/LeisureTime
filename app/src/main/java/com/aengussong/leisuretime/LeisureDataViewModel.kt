@@ -11,14 +11,12 @@ import io.reactivex.schedulers.Schedulers
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
-class LeisureDataViewModel : ViewModel(), KoinComponent {
+class LeisureDataViewModel(private val repo:LeisureRepository) : ViewModel(), KoinComponent {
 
     val leisureLiveData: LiveData<LeisureEntity>
         get() = _leisureLiveData
     val errorLiveData: LiveData<String>
         get() = _errorLiveData
-
-    private val repo: LeisureRepository by inject()
 
     private val disposables = CompositeDisposable()
 
@@ -30,14 +28,24 @@ class LeisureDataViewModel : ViewModel(), KoinComponent {
     }
 
     fun addLeisure(leisure: LeisureEntity) {
-        repo.addLeisure(leisure)
+        disposables.add(
+            repo.addLeisure(leisure)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    //empty implementation
+                }, { t: Throwable ->
+                    _errorLiveData.value = t.localizedMessage
+                })
+        )
     }
 
     fun getLeisure(name: String) {
         disposables.add(
-            repo.getLeisure(name).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).subscribe({
-
+            repo.getLeisure(name)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()).subscribe({ entity ->
+                    _leisureLiveData.value = entity
                 }, {
                     _errorLiveData.value = it.localizedMessage
                 })

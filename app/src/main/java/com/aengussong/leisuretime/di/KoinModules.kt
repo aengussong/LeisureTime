@@ -7,6 +7,7 @@ import com.aengussong.leisuretime.data.LeisureRepositoryImpl
 import com.aengussong.leisuretime.data.local.LeisureDb
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.context.loadKoinModules
 import org.koin.dsl.module
 
 val dbModule = module {
@@ -21,10 +22,9 @@ val dbModule = module {
 
 val dataModule = module {
     single<LeisureRepository> { LeisureRepositoryImpl() }
-
     single { get<LeisureDb>().leisureDao() }
 }
 
 val viewModelModule = module {
-    viewModel { LeisureDataViewModel() }
+    viewModel { LeisureDataViewModel(get()) }
 }
