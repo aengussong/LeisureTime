@@ -60,4 +60,16 @@ class LeisureDataViewModel(private val repo: LeisureRepository) : ViewModel(), K
                 })
         )
     }
+
+    fun deleteLeisure(leisureName: String) {
+        disposables.add(
+            repo.deleteLeisure(leisureName)
+                .observeTransfer()
+                .subscribe({
+                    //empty implementation
+                }, {
+                    _errorLiveData.value = it.localizedMessage
+                })
+        )
+    }
 }

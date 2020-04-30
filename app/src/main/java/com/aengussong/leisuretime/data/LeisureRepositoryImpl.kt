@@ -22,4 +22,8 @@ class LeisureRepositoryImpl : LeisureRepository, KoinComponent {
     override fun updateLeisure(oldName: String, newName: String): Completable {
         return localProvider.updateLeisure(oldName, newName)
     }
+
+    override fun deleteLeisure(leisureName: String): Completable {
+        return localProvider.deleteLeisure(leisureName)
+    }
 }

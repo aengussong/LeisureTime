@@ -2,6 +2,7 @@ package com.aengussong.leisuretime.data.local.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import com.aengussong.leisuretime.data.local.entity.LeisureEntity
@@ -22,5 +23,8 @@ interface LeisureDao {
 
     @Query("UPDATE leisureentity SET name = :newName WHERE name = :oldName")
     fun updateLeisure(oldName: String, newName: String): Completable
+
+    @Query("DELETE FROM leisureentity WHERE name = :leisureName")
+    fun deleteLeisure(leisureName: String): Completable
 
 }

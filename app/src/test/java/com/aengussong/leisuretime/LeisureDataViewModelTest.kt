@@ -53,7 +53,7 @@ class LeisureDataViewModelTest : KoinTest {
         repo.apply {
             every { updateLeisure(oldName, newName) } returns Completable.complete()
             every { getLeisure(newName) } returns Single.just(LeisureEntity(newName))
-            every { getLeisure(oldName) } returns Single.error(EmptyResultSetException("empty result set"))
+            every { getLeisure(oldName) } returns emptyResultError()
         }
 
         viewModel.updateLeisure(oldName, newName)
@@ -69,7 +69,18 @@ class LeisureDataViewModelTest : KoinTest {
 
     @Test
     fun should_delete_item() {
-        notImplemented()
+        val leisureName = "name"
+
+        repo.apply {
+            every { deleteLeisure(leisureName) } returns Completable.complete()
+            every { getLeisure(leisureName) } returns emptyResultError()
+        }
+
+        viewModel.deleteLeisure(leisureName)
+
+        viewModel.getLeisure(leisureName)
+        val errorMsgForDeletedItem = viewModel.errorLiveData.value
+        Assert.assertNotNull(errorMsgForDeletedItem)
     }
 
     @Test
@@ -116,6 +127,8 @@ class LeisureDataViewModelTest : KoinTest {
     fun `start viewModel - data should be fetched`() {
         notImplemented()
     }
+
+    private fun <T> emptyResultError():Single<T> = Single.error(EmptyResultSetException("empty result set"))
 
     private fun notImplemented() {
         Assert.fail("Not implemented")
