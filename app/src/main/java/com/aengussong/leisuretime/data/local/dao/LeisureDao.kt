@@ -7,7 +7,6 @@ import androidx.room.Query
 import com.aengussong.leisuretime.data.local.entity.LeisureEntity
 import io.reactivex.Completable
 import io.reactivex.Single
-import java.util.*
 
 @Dao
 interface LeisureDao {
@@ -21,6 +20,7 @@ interface LeisureDao {
     @Query("SELECT * FROM leisureentity ORDER BY counter, updated ASC")
     fun getLeisures(): LiveData<List<LeisureEntity>>
 
-    @Query("UPDATE leisureentity SET counter = :counter, updated=:date WHERE name = :name")
-    fun updateLeisure(name: String, counter: Int, date: Date = Date())
+    @Query("UPDATE leisureentity SET name = :newName WHERE name = :oldName")
+    fun updateLeisure(oldName: String, newName: String): Completable
+
 }

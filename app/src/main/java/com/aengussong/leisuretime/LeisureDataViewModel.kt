@@ -5,13 +5,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.aengussong.leisuretime.data.LeisureRepository
 import com.aengussong.leisuretime.data.local.entity.LeisureEntity
-import io.reactivex.android.schedulers.AndroidSchedulers
+import com.aengussong.leisuretime.util.observeTransfer
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 import org.koin.core.KoinComponent
-import org.koin.core.inject
 
-class LeisureDataViewModel(private val repo:LeisureRepository) : ViewModel(), KoinComponent {
+class LeisureDataViewModel(private val repo: LeisureRepository) : ViewModel(), KoinComponent {
 
     val leisureLiveData: LiveData<LeisureEntity>
         get() = _leisureLiveData
@@ -30,8 +28,7 @@ class LeisureDataViewModel(private val repo:LeisureRepository) : ViewModel(), Ko
     fun addLeisure(leisure: LeisureEntity) {
         disposables.add(
             repo.addLeisure(leisure)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeTransfer()
                 .subscribe({
                     //empty implementation
                 }, { t: Throwable ->
@@ -43,9 +40,21 @@ class LeisureDataViewModel(private val repo:LeisureRepository) : ViewModel(), Ko
     fun getLeisure(name: String) {
         disposables.add(
             repo.getLeisure(name)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).subscribe({ entity ->
+                .observeTransfer()
+                .subscribe({ entity ->
                     _leisureLiveData.value = entity
+                }, {
+                    _errorLiveData.value = it.localizedMessage
+                })
+        )
+    }
+
+    fun updateLeisure(oldName: String, newName: String) {
+        disposables.add(
+            repo.updateLeisure(oldName, newName)
+                .observeTransfer()
+                .subscribe({
+                    //empty implementation
                 }, {
                     _errorLiveData.value = it.localizedMessage
                 })

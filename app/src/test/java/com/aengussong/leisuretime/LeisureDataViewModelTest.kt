@@ -1,6 +1,7 @@
 package com.aengussong.leisuretime
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.room.EmptyResultSetException
 import com.aengussong.leisuretime.data.LeisureRepository
 import com.aengussong.leisuretime.data.local.entity.LeisureEntity
 import com.aengussong.leisuretime.util.TrampolineSchedulerRule
@@ -45,12 +46,34 @@ class LeisureDataViewModelTest : KoinTest {
     }
 
     @Test
-    fun should_edit_item() {
-        notImplemented()
+    fun `edit leisure name - old name shouldn't be available`() {
+        val oldName = "old"
+        val newName = "new"
+
+        repo.apply {
+            every { updateLeisure(oldName, newName) } returns Completable.complete()
+            every { getLeisure(newName) } returns Single.just(LeisureEntity(newName))
+            every { getLeisure(oldName) } returns Single.error(EmptyResultSetException("empty result set"))
+        }
+
+        viewModel.updateLeisure(oldName, newName)
+
+        viewModel.getLeisure(newName)
+        val resultForNewName = viewModel.leisureLiveData.value
+        Assert.assertNotNull(resultForNewName)
+
+        viewModel.getLeisure(oldName)
+        val errorMsgForOldName = viewModel.errorLiveData.value
+        Assert.assertNotNull(errorMsgForOldName)
     }
 
     @Test
     fun should_delete_item() {
+        notImplemented()
+    }
+
+    @Test
+    fun `update counter - counter should be updated`() {
         notImplemented()
     }
 
@@ -86,6 +109,11 @@ class LeisureDataViewModelTest : KoinTest {
 
     @Test
     fun `add item with already existing name - should do nothing`() {
+        notImplemented()
+    }
+
+    @Test
+    fun `start viewModel - data should be fetched`() {
         notImplemented()
     }
 

@@ -18,4 +18,8 @@ class LeisureRepositoryImpl : LeisureRepository, KoinComponent {
     override fun getLeisure(name: String): Single<LeisureEntity> {
         return localProvider.getLeisure(name)
     }
+
+    override fun updateLeisure(oldName: String, newName: String): Completable {
+        return localProvider.updateLeisure(oldName, newName)
+    }
 }
