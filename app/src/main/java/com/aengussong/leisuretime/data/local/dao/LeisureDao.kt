@@ -15,16 +15,16 @@ interface LeisureDao {
     @Insert
     fun addLeisure(leisure: LeisureEntity): Completable
 
-    @Query("SELECT * FROM leisureentity WHERE name=:name")
-    fun getLeisure(name: String): Single<LeisureEntity>
+    @Query("SELECT * FROM leisureentity WHERE id=:id")
+    fun getLeisure(id: Long): Single<LeisureEntity>
 
     @Query("SELECT * FROM leisureentity ORDER BY counter, updated ASC")
     fun getLeisures(): LiveData<List<LeisureEntity>>
 
-    @Query("UPDATE leisureentity SET name = :newName WHERE name = :oldName")
-    fun updateLeisure(oldName: String, newName: String): Completable
+    @Query("UPDATE leisureentity SET name = :newName WHERE id = :id")
+    fun updateLeisure(id: Long, newName: String): Completable
 
-    @Query("DELETE FROM leisureentity WHERE name = :leisureName")
-    fun deleteLeisure(leisureName: String): Completable
+    @Query("DELETE FROM leisureentity WHERE id = :id")
+    fun deleteLeisure(id: Long): Completable
 
 }

@@ -30,55 +30,52 @@ class LeisureDataViewModelTest : KoinTest {
     @Test
     fun `add item - item should be added`() {
         //setup
+        val id = 1234L
         val name = "leisure name"
-        val input = LeisureEntity(name)
+        val input = LeisureEntity(id = id, name = name)
 
         repo.apply {
             every { addLeisure(input) } returns Completable.complete()
-            every { getLeisure(name) } returns Single.just(input)
+            every { getLeisure(id) } returns Single.just(input)
         }
         //exercise
         viewModel.addLeisure(input)
         //verify
-        viewModel.getLeisure(name)
+        viewModel.getLeisure(id)
         val result = viewModel.leisureLiveData.value
         Assert.assertEquals(input, result)
     }
 
     @Test
-    fun `edit leisure name - old name shouldn't be available`() {
-        val oldName = "old"
-        val newName = "new"
+    fun `edit leisure name - name should be edited`() {
+        val id = 1234L
+        val newName = "newName"
 
         repo.apply {
-            every { updateLeisure(oldName, newName) } returns Completable.complete()
-            every { getLeisure(newName) } returns Single.just(LeisureEntity(newName))
-            every { getLeisure(oldName) } returns emptyResultError()
+            every { updateLeisure(id, newName) } returns Completable.complete()
+            every { getLeisure(id) } returns Single.just(LeisureEntity(name = newName))
         }
 
-        viewModel.updateLeisure(oldName, newName)
+        viewModel.updateLeisure(id, newName)
 
-        viewModel.getLeisure(newName)
+        viewModel.getLeisure(id)
         val resultForNewName = viewModel.leisureLiveData.value
         Assert.assertNotNull(resultForNewName)
-
-        viewModel.getLeisure(oldName)
-        val errorMsgForOldName = viewModel.errorLiveData.value
-        Assert.assertNotNull(errorMsgForOldName)
+        Assert.assertEquals(newName, resultForNewName?.name)
     }
 
     @Test
     fun should_delete_item() {
-        val leisureName = "name"
+        val leisureId = 1234L
 
         repo.apply {
-            every { deleteLeisure(leisureName) } returns Completable.complete()
-            every { getLeisure(leisureName) } returns emptyResultError()
+            every { deleteLeisure(leisureId) } returns Completable.complete()
+            every { getLeisure(leisureId) } returns emptyResultError()
         }
 
-        viewModel.deleteLeisure(leisureName)
+        viewModel.deleteLeisure(leisureId)
 
-        viewModel.getLeisure(leisureName)
+        viewModel.getLeisure(leisureId)
         val errorMsgForDeletedItem = viewModel.errorLiveData.value
         Assert.assertNotNull(errorMsgForDeletedItem)
     }

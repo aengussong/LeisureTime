@@ -15,15 +15,15 @@ class LeisureRepositoryImpl : LeisureRepository, KoinComponent {
         return localProvider.addLeisure(leisure)
     }
 
-    override fun getLeisure(name: String): Single<LeisureEntity> {
-        return localProvider.getLeisure(name)
+    override fun getLeisure(id: Long): Single<LeisureEntity> {
+        return localProvider.getLeisure(id)
     }
 
-    override fun updateLeisure(oldName: String, newName: String): Completable {
-        return localProvider.updateLeisure(oldName, newName)
+    override fun updateLeisure(id: Long, newName: String): Completable {
+        return localProvider.updateLeisure(id, newName)
     }
 
-    override fun deleteLeisure(leisureName: String): Completable {
-        return localProvider.deleteLeisure(leisureName)
+    override fun deleteLeisure(id: Long): Completable {
+        return localProvider.deleteLeisure(id)
     }
 }

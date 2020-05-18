@@ -6,7 +6,7 @@ import io.reactivex.Single
 
 interface LeisureRepository {
     fun addLeisure(leisure: LeisureEntity): Completable
-    fun getLeisure(name: String): Single<LeisureEntity>
-    fun updateLeisure(oldName: String, newName: String): Completable
-    fun deleteLeisure(leisureName: String): Completable
+    fun getLeisure(id: Long): Single<LeisureEntity>
+    fun updateLeisure(id: Long, newName: String): Completable
+    fun deleteLeisure(id: Long): Completable
 }

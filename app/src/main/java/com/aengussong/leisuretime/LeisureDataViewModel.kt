@@ -37,9 +37,9 @@ class LeisureDataViewModel(private val repo: LeisureRepository) : ViewModel(), K
         )
     }
 
-    fun getLeisure(name: String) {
+    fun getLeisure(id: Long) {
         disposables.add(
-            repo.getLeisure(name)
+            repo.getLeisure(id)
                 .observeTransfer()
                 .subscribe({ entity ->
                     _leisureLiveData.value = entity
@@ -49,9 +49,9 @@ class LeisureDataViewModel(private val repo: LeisureRepository) : ViewModel(), K
         )
     }
 
-    fun updateLeisure(oldName: String, newName: String) {
+    fun updateLeisure(id: Long, newName: String) {
         disposables.add(
-            repo.updateLeisure(oldName, newName)
+            repo.updateLeisure(id, newName)
                 .observeTransfer()
                 .subscribe({
                     //empty implementation
@@ -61,9 +61,9 @@ class LeisureDataViewModel(private val repo: LeisureRepository) : ViewModel(), K
         )
     }
 
-    fun deleteLeisure(leisureName: String) {
+    fun deleteLeisure(id: Long) {
         disposables.add(
-            repo.deleteLeisure(leisureName)
+            repo.deleteLeisure(id)
                 .observeTransfer()
                 .subscribe({
                     //empty implementation
