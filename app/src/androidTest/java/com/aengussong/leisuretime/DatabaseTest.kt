@@ -45,26 +45,6 @@ class DatabaseTest {
         notImplemented()
     }
 
-    @Test
-    fun should_notify_on_item_added() {
-        notImplemented()
-    }
-
-    @Test
-    fun should_notify_on_item_edited() {
-        notImplemented()
-    }
-
-    @Test
-    fun should_notify_on_item_deleted() {
-        notImplemented()
-    }
-
-    @Test
-    fun should_notify_on_all_counters_dropped() {
-        notImplemented()
-    }
-
     private fun notImplemented() {
         Assert.fail("Not implemented")
     }

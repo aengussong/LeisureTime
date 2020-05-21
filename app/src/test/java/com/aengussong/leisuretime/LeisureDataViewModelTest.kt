@@ -91,32 +91,7 @@ class LeisureDataViewModelTest : KoinTest {
     }
 
     @Test
-    fun should_notify_on_item_added() {
-        notImplemented()
-    }
-
-    @Test
-    fun should_notify_on_item_edited() {
-        notImplemented()
-    }
-
-    @Test
-    fun should_notify_on_item_deleted() {
-        notImplemented()
-    }
-
-    @Test
-    fun should_notify_on_all_counters_dropped() {
-        notImplemented()
-    }
-
-    @Test
     fun newly_added_item_should_have_counter_as_small_as_smallest_counter_in_db() {
-        notImplemented()
-    }
-
-    @Test
-    fun `add item with already existing name - should do nothing`() {
         notImplemented()
     }
 
