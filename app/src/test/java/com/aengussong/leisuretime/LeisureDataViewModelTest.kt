@@ -4,14 +4,17 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.EmptyResultSetException
 import com.aengussong.leisuretime.data.LeisureRepository
 import com.aengussong.leisuretime.data.local.entity.LeisureEntity
+import com.aengussong.leisuretime.util.CoroutineTestRule
 import com.aengussong.leisuretime.util.TrampolineSchedulerRule
-import io.mockk.every
-import io.mockk.mockk
+import io.mockk.*
 import io.reactivex.Completable
 import io.reactivex.Single
-import org.junit.Assert
-import org.junit.Rule
-import org.junit.Test
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
+import org.junit.*
 import org.koin.test.KoinTest
 
 
@@ -23,6 +26,10 @@ class LeisureDataViewModelTest : KoinTest {
     @get:Rule
     val trampolineSchedulerRule = TrampolineSchedulerRule()
 
+    @ExperimentalCoroutinesApi
+    @get:Rule
+    val coroutineTestRule = CoroutineTestRule()
+
     private val repo = mockk<LeisureRepository>()
 
     private val viewModel: LeisureDataViewModel = LeisureDataViewModel(repo)
@@ -30,20 +37,12 @@ class LeisureDataViewModelTest : KoinTest {
     @Test
     fun `add item - item should be added`() {
         //setup
-        val id = 1234L
-        val name = "leisure name"
-        val input = LeisureEntity(id = id, name = name)
-
-        repo.apply {
-            every { addLeisure(input) } returns Completable.complete()
-            every { getLeisure(id) } returns Single.just(input)
-        }
+        val input = LeisureEntity(id = 1L, name = "fake")
+        coEvery { repo.addLeisure(input) } just Runs
         //exercise
         viewModel.addLeisure(input)
         //verify
-        viewModel.getLeisure(id)
-        val result = viewModel.leisureLiveData.value
-        Assert.assertEquals(input, result)
+        coVerify { repo.addLeisure(input) }
     }
 
     @Test
@@ -100,7 +99,8 @@ class LeisureDataViewModelTest : KoinTest {
         notImplemented()
     }
 
-    private fun <T> emptyResultError():Single<T> = Single.error(EmptyResultSetException("empty result set"))
+    private fun <T> emptyResultError(): Single<T> =
+        Single.error(EmptyResultSetException("empty result set"))
 
     private fun notImplemented() {
         Assert.fail("Not implemented")

@@ -3,10 +3,13 @@ package com.aengussong.leisuretime
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.aengussong.leisuretime.data.LeisureRepository
 import com.aengussong.leisuretime.data.local.entity.LeisureEntity
 import com.aengussong.leisuretime.util.observeTransfer
 import io.reactivex.disposables.CompositeDisposable
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.launch
 import org.koin.core.KoinComponent
 
 class LeisureDataViewModel(private val repo: LeisureRepository) : ViewModel(), KoinComponent {
@@ -21,20 +24,16 @@ class LeisureDataViewModel(private val repo: LeisureRepository) : ViewModel(), K
     private val _leisureLiveData = MutableLiveData<LeisureEntity>()
     private val _errorLiveData = MutableLiveData<String>()
 
+    private val errorHelper = CoroutineExceptionHandler { _, throwable -> _errorLiveData.value = throwable.localizedMessage }
+
     override fun onCleared() {
         disposables.dispose()
     }
 
     fun addLeisure(leisure: LeisureEntity) {
-        disposables.add(
+        viewModelScope.launch(errorHelper) {
             repo.addLeisure(leisure)
-                .observeTransfer()
-                .subscribe({
-                    //empty implementation
-                }, { t: Throwable ->
-                    _errorLiveData.value = t.localizedMessage
-                })
-        )
+        }
     }
 
     fun getLeisure(id: Long) {

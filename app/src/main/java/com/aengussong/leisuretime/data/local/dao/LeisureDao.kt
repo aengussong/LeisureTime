@@ -13,7 +13,7 @@ import io.reactivex.Single
 interface LeisureDao {
 
     @Insert
-    fun addLeisure(leisure: LeisureEntity): Completable
+    suspend fun addLeisure(leisure: LeisureEntity)
 
     @Query("SELECT * FROM leisureentity WHERE id=:id")
     fun getLeisure(id: Long): Single<LeisureEntity>
