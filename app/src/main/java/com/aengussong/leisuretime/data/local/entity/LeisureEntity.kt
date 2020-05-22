@@ -6,11 +6,11 @@ import java.util.*
 
 @Entity
 data class LeisureEntity(
-    @PrimaryKey
+    @PrimaryKey()
     val id:Long = 0L,
     val name: String,
     val counter: Int = 0,
     val updated: Date = Date(),
-    //if parent id is null, this item considered to be top node
-    val parentId:String? = null
+    //if ancestry is null, this item considered to be top node
+    val ancestry:String = "NULL"
 )

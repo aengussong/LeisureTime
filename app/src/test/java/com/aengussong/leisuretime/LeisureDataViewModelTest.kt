@@ -44,6 +44,11 @@ class LeisureDataViewModelTest : KoinTest {
     }
 
     @Test
+    fun `add subitem - item should be added as subitem`(){
+        val input = LeisureEntity(id=3L, name="fake", ancestry = "1/2")
+    }
+
+    @Test
     fun `edit leisure name - name should be edited`() {
         val id = 1234L
         val newName = "newName"
