@@ -9,12 +9,10 @@ import com.aengussong.leisuretime.util.TrampolineSchedulerRule
 import io.mockk.*
 import io.reactivex.Completable
 import io.reactivex.Single
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.setMain
-import org.junit.*
+import org.junit.Assert
+import org.junit.Rule
+import org.junit.Test
 import org.koin.test.KoinTest
 
 
