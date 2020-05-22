@@ -77,32 +77,8 @@ class LeisureDataViewModelTest : KoinTest {
         Assert.assertNotNull(errorMsgForDeletedItem)
     }
 
-    @Test
-    fun `update counter - counter should be updated`() {
-        notImplemented()
-    }
-
-    @Test
-    fun should_drop_all_counters() {
-        notImplemented()
-    }
-
-    @Test
-    fun newly_added_item_should_have_counter_as_small_as_smallest_counter_in_db() {
-        notImplemented()
-    }
-
-    @Test
-    fun `start viewModel - data should be fetched`() {
-        notImplemented()
-    }
-
     private fun <T> emptyResultError(): Single<T> =
         Single.error(EmptyResultSetException("empty result set"))
-
-    private fun notImplemented() {
-        Assert.fail("Not implemented")
-    }
 }
 
 
