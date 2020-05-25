@@ -1,5 +1,6 @@
 package com.aengussong.leisuretime.data
 
+import androidx.lifecycle.LiveData
 import com.aengussong.leisuretime.data.local.dao.LeisureDao
 import com.aengussong.leisuretime.data.local.entity.LeisureEntity
 import io.reactivex.Completable
@@ -13,19 +14,19 @@ class LeisureRepositoryImpl : LeisureRepository, KoinComponent {
 
     private val localProvider: LeisureDao by inject()
 
-    override suspend fun addLeisure(leisure: LeisureEntity) = withContext(Dispatchers.IO){
+    override suspend fun addLeisure(leisure: LeisureEntity) = withContext(Dispatchers.IO) {
         localProvider.addLeisure(leisure)
     }
 
-    override fun getLeisure(id: Long): Single<LeisureEntity> {
-        return localProvider.getLeisure(id)
+    override suspend fun getLowestCounter(ancestry:String): Long = withContext(Dispatchers.IO) {
+        localProvider.getLowestCounter(ancestry)
     }
 
-    override fun updateLeisure(id: Long, newName: String): Completable {
-        return localProvider.updateLeisure(id, newName)
+    override suspend fun getAncestry(id: Long): String = withContext(Dispatchers.IO) {
+        localProvider.getAncestry(id)
     }
 
-    override fun deleteLeisure(id: Long): Completable {
-        return localProvider.deleteLeisure(id)
+    override fun getLeisures(): LiveData<List<LeisureEntity>> {
+        return localProvider.getLeisures()
     }
 }
