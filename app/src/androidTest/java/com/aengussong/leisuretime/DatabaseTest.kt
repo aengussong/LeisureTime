@@ -1,14 +1,24 @@
 package com.aengussong.leisuretime
 
-import com.aengussong.leisuretime.util.mockDbModule
+import com.aengussong.leisuretime.data.local.dao.LeisureDao
+import com.aengussong.leisuretime.data.local.entity.LeisureEntity
+import com.aengussong.leisuretime.util.DatabaseManager
+import com.aengussong.leisuretime.util.module.mockDbModule
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
+import org.koin.core.KoinComponent
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.stopKoin
+import org.koin.core.inject
 
-class DatabaseTest {
+class DatabaseTest : KoinComponent {
+
+    private val leisureDao: LeisureDao by inject()
+
+    private val databaseManager = DatabaseManager(leisureDao)
 
     @Before
     fun setUp() {
@@ -21,31 +31,14 @@ class DatabaseTest {
     }
 
     @Test
-    fun addItem_itemShouldBeAdded() {
-        notImplemented()
+    fun getLowesCounter_returnsLowestCounterForCurrentLevel() = runBlocking {
+        databaseManager.populateDatabase()
+        val entityWithLowestCounter = databaseManager.lowestSecondLevel
+        val level = entityWithLowestCounter.ancestry
+
+        val result = leisureDao.getLowestCounter(level)
+
+        Assert.assertEquals(entityWithLowestCounter.counter, result)
     }
 
-    @Test
-    fun should_edit_item() {
-        notImplemented()
-    }
-
-    @Test
-    fun should_delete_item() {
-        notImplemented()
-    }
-
-    @Test
-    fun should_drop_all_counters() {
-        notImplemented()
-    }
-
-    @Test
-    fun addLeisure_shouldHaveCounterAsSmallAsSmallestCounterInDb() {
-        notImplemented()
-    }
-
-    private fun notImplemented() {
-        Assert.fail("Not implemented")
-    }
 }

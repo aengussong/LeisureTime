@@ -15,16 +15,18 @@ interface LeisureDao {
     @Insert
     suspend fun addLeisure(leisure: LeisureEntity)
 
-    @Query("SELECT * FROM leisureentity WHERE id=:id")
-    fun getLeisure(id: Long): Single<LeisureEntity>
-
     @Query("SELECT * FROM leisureentity ORDER BY counter, updated ASC")
     fun getLeisures(): LiveData<List<LeisureEntity>>
 
-    @Query("UPDATE leisureentity SET name = :newName WHERE id = :id")
-    fun updateLeisure(id: Long, newName: String): Completable
+    /**
+     * Select lowest counter for level, e.g. if item added as child for second level element, we
+     * should find lowest counter in third level for this parent element, without elements
+     * examination on other levels
+     * */
+    @Query("SELECT MIN(counter) FROM leisureentity WHERE ancestry = :ancestry")
+    suspend fun getLowestCounter(ancestry:String): Long
 
-    @Query("DELETE FROM leisureentity WHERE id = :id")
-    fun deleteLeisure(id: Long): Completable
+    @Query("SELECT ancestry FROM leisureentity WHERE id = :id")
+    suspend fun getAncestry(id:Long):String
 
 }
