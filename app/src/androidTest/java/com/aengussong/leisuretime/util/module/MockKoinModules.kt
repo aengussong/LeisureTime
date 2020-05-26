@@ -5,7 +5,7 @@ import androidx.test.core.app.ApplicationProvider
 import com.aengussong.leisuretime.data.local.LeisureDb
 import org.koin.dsl.module
 
-val mockDbModule = module {
+val inMemoryDb = module {
     single(override = true) {
         Room.inMemoryDatabaseBuilder(
             ApplicationProvider.getApplicationContext(),

@@ -1,34 +1,18 @@
-package com.aengussong.leisuretime
+package com.aengussong.leisuretime.db
 
+import com.aengussong.leisuretime.DbRelatedTest
 import com.aengussong.leisuretime.data.local.dao.LeisureDao
-import com.aengussong.leisuretime.data.local.entity.LeisureEntity
 import com.aengussong.leisuretime.util.DatabaseManager
-import com.aengussong.leisuretime.util.module.mockDbModule
 import kotlinx.coroutines.runBlocking
-import org.junit.After
 import org.junit.Assert
-import org.junit.Before
 import org.junit.Test
-import org.koin.core.KoinComponent
-import org.koin.core.context.loadKoinModules
-import org.koin.core.context.stopKoin
 import org.koin.core.inject
 
-class DatabaseTest : KoinComponent {
+class DatabaseTest : DbRelatedTest() {
 
     private val leisureDao: LeisureDao by inject()
 
     private val databaseManager = DatabaseManager(leisureDao)
-
-    @Before
-    fun setUp() {
-        loadKoinModules(mockDbModule)
-    }
-
-    @After
-    fun tearDown() {
-        stopKoin()
-    }
 
     @Test
     fun getLowesCounter_returnsLowestCounterForCurrentLevel() = runBlocking {
