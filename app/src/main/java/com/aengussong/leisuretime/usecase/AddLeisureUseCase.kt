@@ -12,10 +12,26 @@ class AddLeisureUseCase(private val repo: LeisureRepository) {
     }
 
     private suspend fun createLeisure(name: String, parentId: Long?): LeisureEntity {
-        val parentAncestry = parentId?.let { repo.getAncestry(parentId) } ?: ROOT_ANCESTRY
-        val ancestry = parentId?.let { "$parentAncestry/$parentId" } ?: ROOT_ANCESTRY
-        val counter = repo.getLowestCounter(ancestry = parentAncestry)
-        return LeisureEntity(name = name, counter = counter, ancestry = ancestry)
+        return parentId?.let {
+            createSubLeisure(name, it)
+        } ?: createRootLeisure(name)
+    }
+
+    private suspend fun createSubLeisure(name: String, parentId: Long): LeisureEntity {
+        val parentAncestry = repo.getAncestry(parentId)
+        if (parentAncestry.contains(parentId.toString())) throw CyclingReferenceException()
+        val ancestry = "$parentAncestry/$parentId"
+        val counter = repo.getLowestCounter(parentAncestry)
+        return LeisureEntity(name, counter, ancestry)
+    }
+
+    private suspend fun createRootLeisure(name: String): LeisureEntity {
+        val ancestry = ROOT_ANCESTRY
+        val counter = repo.getLowestCounter(ancestry)
+        return LeisureEntity(name, counter, ancestry)
     }
 
 }
+
+class CyclingReferenceException(msg: String = "Entity can't contain cycling reference in ancestry tree") :
+    Exception(msg)

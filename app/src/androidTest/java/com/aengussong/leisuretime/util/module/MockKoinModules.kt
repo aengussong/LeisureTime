@@ -12,4 +12,7 @@ val inMemoryDb = module {
             LeisureDb::class.java
         ).build()
     }
+    single(override = true) {
+        get<LeisureDb>().leisureDao()
+    }
 }

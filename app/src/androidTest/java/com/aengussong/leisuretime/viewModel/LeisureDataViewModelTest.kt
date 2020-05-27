@@ -8,6 +8,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Assert
 import org.junit.Rule
 import org.junit.Test
+import org.koin.test.get
 import org.koin.test.inject
 
 
@@ -19,16 +20,22 @@ class LeisureDataViewModelTest : DbRelatedTest() {
     private val viewModel: LeisureDataViewModel by inject()
 
     @Test
-    fun startViewModel_dataShouldBeLoaded() {
-        viewModel.leisureLiveData.getOrAwaitValue()
+    fun startViewModel_dataShouldBeLoaded(): Unit = runBlocking {
+        val dbData = databaseManager.populateDatabase()
+        val viewModel: LeisureDataViewModel = get()
+
+        val result = viewModel.leisureLiveData.getOrAwaitValue()
+
+        Assert.assertEquals(dbData.size, result.size)
     }
 
     @Test
     fun addItem_itemShouldBeAdded() = runBlocking {
-        val leisureName = "fake"
+        val leisureName = "addItemTest"
 
-        viewModel.addLeisure(leisureName)
+        val job = viewModel.addLeisure(leisureName)
 
+        job.join()
         val result = viewModel.leisureLiveData.getOrAwaitValue()
         Assert.assertEquals(leisureName, result.first().name)
     }

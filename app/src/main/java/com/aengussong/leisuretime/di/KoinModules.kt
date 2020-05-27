@@ -19,11 +19,11 @@ val dbModule = module {
             "leisure_db"
         ).build()
     }
+    single { get<LeisureDb>().leisureDao() }
 }
 
 val dataModule = module {
     single<LeisureRepository> { LeisureRepositoryImpl() }
-    single { get<LeisureDb>().leisureDao() }
     single { AddLeisureUseCase(get()) }
     single { GetLeisureUseCase(get()) }
 }
