@@ -2,7 +2,6 @@ package com.aengussong.leisuretime.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.aengussong.leisuretime.util.ROOT_ANCESTRY
 import java.util.*
 
 @Entity
@@ -18,4 +17,10 @@ data class LeisureEntity(
      * entity with id 2
      */
     val ancestry: String
-)
+) {
+    constructor(name: String, count: Long, ancestry: String) : this(
+        name = name,
+        counter = count,
+        ancestry = ancestry
+    )
+}

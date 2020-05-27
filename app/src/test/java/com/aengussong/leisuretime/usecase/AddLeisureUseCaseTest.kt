@@ -56,16 +56,28 @@ internal class AddLeisureUseCaseTest {
         assertLeisureCounters(expected, result)
     }
 
-    private fun mockLeisureCreation(
-        leisureSlot: CapturingSlot<LeisureEntity>,
-        parentId: Long?,
-        lowestCounter: Long = 4L
-    ): LeisureEntity {
-        val parentAncestry = "2/4"
+    @Test(expected = CyclingReferenceException::class)
+    fun `add leisure with cycling parent reference - should throw cycling exception`() =
+        runBlocking {
+            val parentId = 2L
+            val parentAncestry = "1/2/3"
+            mockLeisureCreation(parentId = parentId, parentAncestry = parentAncestry)
 
+            useCase.execute("_", parentId)
+        }
+
+    private fun mockLeisureCreation(
+        leisureSlot: CapturingSlot<LeisureEntity>? = null,
+        parentId: Long?,
+        lowestCounter: Long = 4L,
+        parentAncestry: String = "2/4"
+    ): LeisureEntity {
         coEvery { repo.getLowestCounter(any()) } returns lowestCounter
         coEvery { repo.getAncestry(any()) } returns parentAncestry
-        coEvery { repo.addLeisure(capture(leisureSlot)) } just Runs
+        coEvery {
+            val addedLeisure = leisureSlot?.let { capture(leisureSlot) } ?: any()
+            repo.addLeisure(addedLeisure)
+        } just Runs
 
         return createLeisure("fake", lowestCounter, parentId?.let { "$parentAncestry/$parentId" })
     }
