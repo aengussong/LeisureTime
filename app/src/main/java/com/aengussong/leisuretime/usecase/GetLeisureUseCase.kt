@@ -7,6 +7,7 @@ import com.aengussong.leisuretime.data.local.entity.LeisureEntity
 import com.aengussong.leisuretime.model.Leisure
 import com.aengussong.leisuretime.usecase.mapper.Mapper
 import com.aengussong.leisuretime.util.AncestryBuilder
+import com.aengussong.leisuretime.util.Tree
 import java.util.*
 import kotlin.Comparator
 
@@ -50,40 +51,20 @@ class GetLeisureUseCase(private val repo: LeisureRepository) : Mapper() {
 
         return trees.values.toList().sort(comparator)
     }
-}
 
-class Tree<T>(val value: T) {
-    private var children = mutableListOf<Tree<T>>()
-
-    fun childrenCount() = children.size
-    fun addSubtree(subtree: Tree<T>) = children.add(subtree)
-    fun levels(): Int {
-        var levels = 0
-        children.forEach { levels = levels.coerceAtLeast(it.levels()) }
-        return levels + 1
+    private fun Tree<Leisure>.addToSubtree(ancestry: Stack<Long>, leisure: Leisure) {
+        val parentId = ancestry.pop()
+        if (value.id == parentId && ancestry.isEmpty()) {
+            addSubtree(Tree(leisure))
+            return
+        }
+        val subParentId = ancestry.peek()
+        val parentTree = children().firstOrNull { it.value.id == subParentId }
+        parentTree?.addToSubtree(ancestry, leisure) ?: throw NullPointerException()
     }
 
-    fun sortChildren(comparator: Comparator<Tree<T>>) {
-        val sorted = children.sortedWith(comparator)
-        children = sorted.toMutableList()
-        children.forEach { subTree -> subTree.sortChildren(comparator) }
+    private fun List<Tree<Leisure>>.sort(comparator: Comparator<Tree<Leisure>>): List<Tree<Leisure>> {
+        forEach { tree -> tree.sortChildren(comparator) }
+        return sortedWith(comparator)
     }
-
-    fun children(): List<Tree<T>> = children
-}
-
-fun Tree<Leisure>.addToSubtree(ancestry: Stack<Long>, leisure: Leisure) {
-    val parentId = ancestry.pop()
-    if (value.id == parentId && ancestry.isEmpty()) {
-        addSubtree(Tree(leisure))
-        return
-    }
-    val subParentId = ancestry.peek()
-    val parentTree = children().firstOrNull { it.value.id == subParentId }
-    parentTree?.addToSubtree(ancestry, leisure) ?: throw NullPointerException()
-}
-
-fun List<Tree<Leisure>>.sort(comparator: Comparator<Tree<Leisure>>): List<Tree<Leisure>> {
-    forEach { tree -> tree.sortChildren(comparator) }
-    return sortedWith(comparator)
 }
