@@ -8,6 +8,7 @@ import com.aengussong.leisuretime.model.Leisure
 import com.aengussong.leisuretime.usecase.AddLeisureUseCase
 import com.aengussong.leisuretime.usecase.GetLeisureUseCase
 import com.aengussong.leisuretime.usecase.Tree
+import com.aengussong.leisuretime.util.Tree
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
