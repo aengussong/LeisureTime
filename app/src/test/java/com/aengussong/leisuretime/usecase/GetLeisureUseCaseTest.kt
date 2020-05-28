@@ -136,7 +136,7 @@ class GetLeisureUseCaseTest {
         val counter_longAgoUpdated = 4L
         val counter_equal = 5L
         val recently = Date()
-        val longAgo = Calendar.getInstance().apply { set(Calendar.DAY_OF_YEAR, -25) }.time
+        val longAgo = Calendar.getInstance().apply { set(Calendar.HOUR_OF_DAY, -1) }.time
 
         fun getLargestCounterEntity(ancestry: String = rootAncestry) =
             LeisureEntity(id_largestCounter, "largest", counter_largest, recently, ancestry)
