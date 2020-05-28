@@ -41,7 +41,8 @@ class AncestryBuilder(private var ancestry: String = ROOT_ANCESTRY) {
     /**
      * Returns ancestry in stack format with parent ids on the top
      * */
-    fun getAncestryStack() = Stack<Long>().apply { getAncestryIds().forEach { push(it) } }
+    fun getAncestryStack() =
+        Stack<Long>().apply { getAncestryIds().asReversed().forEach { push(it) } }
 
     /**
      * Throws [CyclingReferenceException] if cycling reference was detected in ancestry. Normally,

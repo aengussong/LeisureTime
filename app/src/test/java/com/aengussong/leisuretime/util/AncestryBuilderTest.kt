@@ -94,4 +94,24 @@ class AncestryBuilderTest {
         assertEquals(parentId, builder.getRootParent())
     }
 
+    @Test
+    fun `get stack - should return stack with parents on top and children on bottom`() {
+        val topId = 3L
+        val middleId = 2L
+        val lowId = 1L
+        val builder = AncestryBuilder().addChild(topId)
+            .addChild(middleId)
+            .addChild(lowId)
+
+        val stack = builder.getAncestryStack()
+
+        assertEquals(3, stack.size)
+        val resultTop = stack.pop()
+        assertEquals(topId, resultTop)
+        val resultMiddle = stack.pop()
+        assertEquals(middleId, resultMiddle)
+        val resultLow = stack.pop()
+        assertEquals(lowId, resultLow)
+    }
+
 }
