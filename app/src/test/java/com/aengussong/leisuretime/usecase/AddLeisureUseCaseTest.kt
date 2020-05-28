@@ -2,8 +2,8 @@ package com.aengussong.leisuretime.usecase
 
 import com.aengussong.leisuretime.data.LeisureRepository
 import com.aengussong.leisuretime.data.local.entity.LeisureEntity
-import com.aengussong.leisuretime.util.CoroutineTestRule
-import com.aengussong.leisuretime.util.ROOT_ANCESTRY
+import com.aengussong.leisuretime.testUtils.CoroutineTestRule
+import com.aengussong.leisuretime.util.AncestryBuilder
 import io.mockk.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
@@ -56,34 +56,27 @@ internal class AddLeisureUseCaseTest {
         assertLeisureCounters(expected, result)
     }
 
-    @Test(expected = CyclingReferenceException::class)
-    fun `add leisure with cycling parent reference - should throw cycling exception`() =
-        runBlocking {
-            val parentId = 2L
-            val parentAncestry = "1/2/3"
-            mockLeisureCreation(parentId = parentId, parentAncestry = parentAncestry)
-
-            useCase.execute("_", parentId)
-        }
-
     private fun mockLeisureCreation(
         leisureSlot: CapturingSlot<LeisureEntity>? = null,
         parentId: Long?,
         lowestCounter: Long = 4L,
-        parentAncestry: String = "2/4"
+        name: String = "fake"
     ): LeisureEntity {
+        val ancestryBuilder = AncestryBuilder()
         coEvery { repo.getLowestCounter(any()) } returns lowestCounter
-        coEvery { repo.getAncestry(any()) } returns parentAncestry
+        coEvery { repo.getAncestry(any()) } returns ancestryBuilder.toString()
         coEvery {
             val addedLeisure = leisureSlot?.let { capture(leisureSlot) } ?: any()
             repo.addLeisure(addedLeisure)
         } just Runs
 
-        return createLeisure("fake", lowestCounter, parentId?.let { "$parentAncestry/$parentId" })
+        parentId?.let { ancestryBuilder.addChild(parentId) }
+
+        return createLeisure(name, lowestCounter, ancestryBuilder.toString())
     }
 
-    private fun createLeisure(name: String, counter: Long, ancestry: String?) =
-        LeisureEntity(name = name, counter = counter, ancestry = ancestry ?: ROOT_ANCESTRY)
+    private fun createLeisure(name: String, counter: Long, ancestry: String) =
+        LeisureEntity(name = name, counter = counter, ancestry = ancestry)
 
     private fun assertLeisuresEqual(expected: LeisureEntity, result: LeisureEntity) {
         Assert.assertEquals(expected.name, result.name)

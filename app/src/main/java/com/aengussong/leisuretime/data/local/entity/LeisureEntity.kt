@@ -12,15 +12,15 @@ data class LeisureEntity(
     val counter: Long = 0,
     val updated: Date = Date(),
     /**
-     * ancestry written in ids  sequence, with slash as delimiter, e.g. "2/5"
+     * ancestry written in ids sequence with slash as delimiter, e.g. "ROOT/2/5/"
      * that means that current entity is child for entity with id 5, which, in his turn, child of
      * entity with id 2
      */
     val ancestry: String
 ) {
-    constructor(name: String, count: Long, ancestry: String) : this(
-        name = name,
-        counter = count,
-        ancestry = ancestry
+    constructor(leisureName: String, leisureCount: Long, leisureAncestry: String) : this(
+        name = leisureName,
+        counter = leisureCount,
+        ancestry = leisureAncestry
     )
 }

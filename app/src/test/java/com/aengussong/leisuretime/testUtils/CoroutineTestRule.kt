@@ -1,4 +1,4 @@
-package com.aengussong.leisuretime.util
+package com.aengussong.leisuretime.testUtils
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

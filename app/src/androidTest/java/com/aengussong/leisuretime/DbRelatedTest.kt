@@ -14,8 +14,6 @@ import org.koin.test.KoinTest
 import org.koin.test.inject
 import java.util.*
 
-private val rootElement = LeisureEntity(1L, "root", 0, Date(), "")
-
 open class DbRelatedTest : KoinTest {
 
     companion object {
@@ -26,11 +24,6 @@ open class DbRelatedTest : KoinTest {
     private val db: LeisureDb by inject()
     private val leisureDao: LeisureDao by inject()
     protected val databaseManager = DatabaseManager(leisureDao)
-
-    @Before
-    fun insertRootElement() = runBlocking {
-        leisureDao.addLeisure(rootElement)
-    }
 
     @After
     fun cleanDb() {
