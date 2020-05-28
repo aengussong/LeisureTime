@@ -12,7 +12,7 @@ interface LeisureDao {
     @Insert
     suspend fun addLeisure(leisure: LeisureEntity)
 
-    @Query("SELECT * FROM leisureentity ORDER BY counter, updated ASC")
+    @Query("SELECT * FROM leisureentity ORDER BY ancestry")
     fun getLeisures(): LiveData<List<LeisureEntity>>
 
     /**

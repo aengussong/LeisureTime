@@ -26,7 +26,8 @@ class LeisureDataViewModelTest : DbRelatedTest() {
 
         val result = viewModel.leisureLiveData.getOrAwaitValue()
 
-        Assert.assertEquals(dbData.size, result.size)
+        Assert.assertEquals(1, result.size)
+        Assert.assertEquals(dbData.size, result.first().levels())
     }
 
     @Test
@@ -37,7 +38,7 @@ class LeisureDataViewModelTest : DbRelatedTest() {
 
         job.join()
         val result = viewModel.leisureLiveData.getOrAwaitValue()
-        Assert.assertEquals(leisureName, result.first().name)
+        Assert.assertEquals(leisureName, result.first().value.name)
     }
 }
 

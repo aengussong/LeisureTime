@@ -5,5 +5,5 @@ import com.aengussong.leisuretime.model.Leisure
 
 open class Mapper {
 
-    protected fun LeisureEntity.toEntity() = Leisure(id, name, counter, updated)
+    protected fun LeisureEntity.toLeisure() = Leisure(id, name, counter, updated)
 }
