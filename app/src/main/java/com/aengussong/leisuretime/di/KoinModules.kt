@@ -17,9 +17,7 @@ val dbModule = module {
             androidApplication(),
             LeisureDb::class.java,
             "leisure_db"
-        )
-            .createFromAsset("db/leisure")
-            .build()
+        ).build()
     }
     single { get<LeisureDb>().leisureDao() }
 }
