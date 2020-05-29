@@ -8,6 +8,7 @@ import com.aengussong.leisuretime.data.local.LeisureDb
 import com.aengussong.leisuretime.usecase.AddLeisureUseCase
 import com.aengussong.leisuretime.usecase.GetLeisureUseCase
 import com.aengussong.leisuretime.usecase.IncrementLeisureUseCase
+import com.aengussong.leisuretime.usecase.RenameLeisureUseCase
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -28,8 +29,9 @@ val dataModule = module {
     single { AddLeisureUseCase(get()) }
     single { GetLeisureUseCase(get()) }
     single { IncrementLeisureUseCase(get()) }
+    single { RenameLeisureUseCase(get()) }
 }
 
 val viewModelModule = module {
-    viewModel { LeisureDataViewModel(get(), get(), get()) }
+    viewModel { LeisureDataViewModel(get(), get(), get(), get()) }
 }

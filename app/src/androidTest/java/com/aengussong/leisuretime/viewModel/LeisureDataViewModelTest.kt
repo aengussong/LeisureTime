@@ -38,9 +38,8 @@ class LeisureDataViewModelTest : DbRelatedTest() {
     fun addItem_itemShouldBeAdded() = runBlocking {
         val leisureName = "addItemTest"
 
-        val job = viewModel.addLeisure(leisureName)
+        viewModel.addLeisure(leisureName).join()
 
-        job.join()
         val result = viewModel.leisureLiveData.getOrAwaitValue()
         Assert.assertEquals(leisureName, result.first().value.name)
     }
@@ -51,14 +50,26 @@ class LeisureDataViewModelTest : DbRelatedTest() {
         val testLeisure = dbData.last()
         val parentRootId = AncestryBuilder(testLeisure.ancestry).getRootParent()
 
-        val job = viewModel.incrementCounter(testLeisure.id)
-        job.join()
+        viewModel.incrementCounter(testLeisure.id).join()
 
         delay(500)
         val result = viewModel.leisureLiveData.getOrAwaitValue()
 
         val resultLeisure = result.findLeisure(parentRootId!!, testLeisure.id)
         Assert.assertEquals(testLeisure.counter + 1, resultLeisure?.counter)
+    }
+
+    @Test
+    fun renameLeisure_leisureShouldBeRenamed() = runBlocking {
+        val oldName = "oldName"
+        val newName = "newName"
+        viewModel.addLeisure(oldName).join()
+        val leisureId = viewModel.leisureLiveData.getOrAwaitValue().first().value.id
+
+        viewModel.renameLeisure(leisureId, newName).join()
+
+        val updatedLeisureName = viewModel.leisureLiveData.getOrAwaitValue().first().value.name
+        Assert.assertEquals(newName, updatedLeisureName)
     }
 
     private fun List<Tree<Leisure>>.findLeisure(parentRootId: Long, leisureId: Long): Leisure? {

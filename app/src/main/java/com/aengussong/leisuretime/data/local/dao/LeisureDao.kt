@@ -32,4 +32,7 @@ interface LeisureDao {
     @Query("SELECT * FROM leisureentity WHERE id = :id")
     suspend fun getLeisure(id: Long): LeisureEntity
 
+    @Query("UPDATE leisureentity SET name = :newName WHERE id = :id")
+    suspend fun renameLeisure(id: Long, newName: String)
+
 }

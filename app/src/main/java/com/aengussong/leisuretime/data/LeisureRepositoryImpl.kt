@@ -3,6 +3,7 @@ package com.aengussong.leisuretime.data
 import androidx.lifecycle.LiveData
 import com.aengussong.leisuretime.data.local.dao.LeisureDao
 import com.aengussong.leisuretime.data.local.entity.LeisureEntity
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.koin.core.KoinComponent
@@ -12,15 +13,15 @@ class LeisureRepositoryImpl : LeisureRepository, KoinComponent {
 
     private val localProvider: LeisureDao by inject()
 
-    override suspend fun addLeisure(leisure: LeisureEntity) = withContext(Dispatchers.IO) {
+    override suspend fun addLeisure(leisure: LeisureEntity) = onIO {
         localProvider.addLeisure(leisure)
     }
 
-    override suspend fun getLowestCounter(ancestry: String): Long = withContext(Dispatchers.IO) {
+    override suspend fun getLowestCounter(ancestry: String): Long = onIO {
         localProvider.getLowestCounter(ancestry)
     }
 
-    override suspend fun getAncestry(id: Long): String = withContext(Dispatchers.IO) {
+    override suspend fun getAncestry(id: Long): String = onIO {
         localProvider.getAncestry(id)
     }
 
@@ -28,11 +29,18 @@ class LeisureRepositoryImpl : LeisureRepository, KoinComponent {
         return localProvider.getLeisures()
     }
 
-    override suspend fun getLeisure(id: Long): LeisureEntity = withContext(Dispatchers.IO) {
+    override suspend fun getLeisure(id: Long): LeisureEntity = onIO {
         localProvider.getLeisure(id)
     }
 
-    override suspend fun incrementLeisures(ids: List<Long>) = withContext(Dispatchers.IO) {
+    override suspend fun incrementLeisures(ids: List<Long>) = onIO {
         localProvider.incrementLeisures(ids)
     }
+
+    override suspend fun renameLeisure(id: Long, newName: String) = onIO {
+        localProvider.renameLeisure(id, newName)
+    }
+
+    private suspend fun <T> onIO(block: suspend CoroutineScope.() -> T) =
+        withContext(Dispatchers.IO, block = block)
 }
