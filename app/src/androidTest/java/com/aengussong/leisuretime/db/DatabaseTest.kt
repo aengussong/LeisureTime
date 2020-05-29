@@ -53,6 +53,20 @@ class DatabaseTest : DbRelatedTest() {
     }
 
     @Test
+    fun incrementLeisureCounter_updatedDateShouldUpdate() = runBlocking {
+        databaseManager.populateDatabase()
+        val testEntity = databaseManager.lowestSecondLevel
+        val preIncrementEntity = leisureDao.getLeisure(testEntity.id)
+        Assert.assertEquals(testEntity.updated, preIncrementEntity.updated)
+
+        leisureDao.incrementLeisures(listOf(testEntity.id))
+
+        val resultEntity = leisureDao.getLeisure(testEntity.id)
+
+        Assert.assertNotEquals(testEntity.updated, resultEntity.updated)
+    }
+
+    @Test
     fun removeLeisure_leisureSubTreeShouldBeRemoved() = runBlocking {
         databaseManager.populateDatabase()
         val removedEntity = databaseManager.lowestSecondLevel

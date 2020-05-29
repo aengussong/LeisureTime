@@ -12,4 +12,5 @@ interface LeisureRepository {
     suspend fun incrementLeisures(ids: List<Long>)
     suspend fun renameLeisure(id: Long, newName: String)
     suspend fun removeLeisure(id: Long)
+    suspend fun dropCounters()
 }
