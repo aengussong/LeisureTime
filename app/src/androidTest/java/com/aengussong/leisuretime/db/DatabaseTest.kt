@@ -18,14 +18,14 @@ class DatabaseTest : DbRelatedTest() {
     val instantTaskRule = InstantTaskExecutorRule()
 
     @Test
-    fun getLowesCounter_returnsLowestCounterForCurrentLevel() = runBlocking {
+    fun getLowestCounter_returnsLowestCounterForCurrentLevel() = runBlocking {
         databaseManager.populateDatabase()
-        val entityWithLowestCounter = databaseManager.lowestSecondLevel
-        val level = entityWithLowestCounter.ancestry
+        val entityWithLowestCounterOnSecondLevel = databaseManager.lowestSecondLevel
+        val secondLevelAncestry = entityWithLowestCounterOnSecondLevel.ancestry
 
-        val result = leisureDao.getLowestCounter(level)
+        val result = leisureDao.getLowestCounter(secondLevelAncestry)
 
-        Assert.assertEquals(entityWithLowestCounter.counter, result)
+        Assert.assertEquals(entityWithLowestCounterOnSecondLevel.counter, result)
     }
 
     @Test
@@ -38,5 +38,18 @@ class DatabaseTest : DbRelatedTest() {
         Assert.assertEquals(expected, result)
     }
 
+    @Test
+    fun incrementLeisureCounter_counterShouldBeIncremented() = runBlocking {
+        databaseManager.populateDatabase()
+        val testEntity = databaseManager.lowestSecondLevel
+        val parentEntity = databaseManager.lowestFirstLevel
+
+        leisureDao.incrementLeisures(listOf(testEntity.id, parentEntity.id))
+
+        val resultTestEntity = leisureDao.getLeisure(testEntity.id)
+        val resultParentEntity = leisureDao.getLeisure(parentEntity.id)
+        Assert.assertEquals(testEntity.counter + 1, resultTestEntity.counter)
+        Assert.assertEquals(parentEntity.counter + 1, resultParentEntity.counter)
+    }
 
 }

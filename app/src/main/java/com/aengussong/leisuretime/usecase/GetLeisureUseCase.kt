@@ -13,6 +13,10 @@ import kotlin.Comparator
 
 class GetLeisureUseCase(private val repo: LeisureRepository) : Mapper() {
 
+    /**
+     * Descending comparator by counter and updated fields. Counter considered to be the most
+     * important comparable value, two items compared by date only if they have same counter.
+     * */
     private val comparator = Comparator<Tree<Leisure>> { tree1, tree2 ->
         val counterDiff = tree2.value.counter - tree1.value.counter
         val equality = if (counterDiff == 0L) {

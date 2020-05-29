@@ -57,7 +57,12 @@ class AncestryBuilder(private var ancestry: String = ROOT_ANCESTRY) {
         return this
     }
 
-    private fun getAncestryIds() = ancestry.split(DELIMITER)
+    fun addChildren(children: List<Long>): AncestryBuilder {
+        children.forEach { addChild(it) }
+        return this
+    }
+
+    fun getAncestryIds() = ancestry.split(DELIMITER)
         .drop(1)
         .dropLast(1)
         .map { it.toLong() }

@@ -4,6 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
 import com.aengussong.leisuretime.data.LeisureRepository
 import com.aengussong.leisuretime.data.local.entity.LeisureEntity
+import com.aengussong.leisuretime.testUtils.LeisureProvider
 import com.aengussong.leisuretime.testUtils.getOrAwaitValue
 import com.aengussong.leisuretime.util.AncestryBuilder
 import io.mockk.every
@@ -124,50 +125,5 @@ class GetLeisureUseCaseTest {
         assertEquals(lp.id_largestCounter, resultChildren[0].value.id)
         assertEquals(lp.id_recentlyUpdated, resultChildren[1].value.id)
         assertEquals(lp.id_longAgoUpdated, resultChildren[2].value.id)
-    }
-
-    class LeisureProvider() {
-        val rootAncestry = AncestryBuilder().toString()
-        val id_largestCounter = 2L
-        val id_recentlyUpdated = 3L
-        val id_longAgoUpdated = 4L
-        val counter_largest = 10L
-        val counter_recentlyUpdated = 2L
-        val counter_longAgoUpdated = 4L
-        val counter_equal = 5L
-        val recently = Date()
-        val longAgo = Calendar.getInstance().apply { set(Calendar.HOUR_OF_DAY, -1) }.time
-
-        fun getLargestCounterEntity(ancestry: String = rootAncestry) =
-            LeisureEntity(id_largestCounter, "largest", counter_largest, recently, ancestry)
-
-        fun getRecentlyUpdatedEntity(
-            isEqualCounter: Boolean = false,
-            ancestry: String = rootAncestry
-        ): LeisureEntity {
-            val counter = if (isEqualCounter) counter_equal else counter_recentlyUpdated
-            return LeisureEntity(
-                id_recentlyUpdated,
-                "recently",
-                counter,
-                recently,
-                ancestry
-            )
-        }
-
-        fun getLongAgoUpdatedEntity(
-            isEqualCounter: Boolean = false,
-            ancestry: String = rootAncestry
-        ): LeisureEntity {
-            val counter = if (isEqualCounter) counter_equal else counter_longAgoUpdated
-            return LeisureEntity(
-                id_longAgoUpdated,
-                "longAgo",
-                counter,
-                longAgo,
-                ancestry
-            )
-        }
-
     }
 }

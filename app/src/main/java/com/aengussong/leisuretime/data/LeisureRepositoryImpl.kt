@@ -3,8 +3,6 @@ package com.aengussong.leisuretime.data
 import androidx.lifecycle.LiveData
 import com.aengussong.leisuretime.data.local.dao.LeisureDao
 import com.aengussong.leisuretime.data.local.entity.LeisureEntity
-import io.reactivex.Completable
-import io.reactivex.Single
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.koin.core.KoinComponent
@@ -18,7 +16,7 @@ class LeisureRepositoryImpl : LeisureRepository, KoinComponent {
         localProvider.addLeisure(leisure)
     }
 
-    override suspend fun getLowestCounter(ancestry:String): Long = withContext(Dispatchers.IO) {
+    override suspend fun getLowestCounter(ancestry: String): Long = withContext(Dispatchers.IO) {
         localProvider.getLowestCounter(ancestry)
     }
 
@@ -28,5 +26,13 @@ class LeisureRepositoryImpl : LeisureRepository, KoinComponent {
 
     override fun getLeisures(): LiveData<List<LeisureEntity>> {
         return localProvider.getLeisures()
+    }
+
+    override suspend fun getLeisure(id: Long): LeisureEntity = withContext(Dispatchers.IO) {
+        localProvider.getLeisure(id)
+    }
+
+    override suspend fun incrementLeisures(ids: List<Long>) = withContext(Dispatchers.IO) {
+        localProvider.incrementLeisures(ids)
     }
 }
