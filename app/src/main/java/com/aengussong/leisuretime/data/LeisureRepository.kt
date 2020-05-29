@@ -10,4 +10,5 @@ interface LeisureRepository {
     fun getLeisures(): LiveData<List<LeisureEntity>>
     suspend fun getLeisure(id: Long): LeisureEntity
     suspend fun incrementLeisures(ids: List<Long>)
+    suspend fun renameLeisure(id: Long, newName: String)
 }
