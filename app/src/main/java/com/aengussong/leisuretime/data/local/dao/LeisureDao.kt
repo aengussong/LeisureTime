@@ -26,4 +26,10 @@ interface LeisureDao {
     @Query("SELECT ancestry FROM leisureentity WHERE id = :id")
     suspend fun getAncestry(id: Long): String
 
+    @Query("UPDATE leisureentity SET counter = counter+1 WHERE id IN (:ids)")
+    suspend fun incrementLeisures(ids: List<Long>)
+
+    @Query("SELECT * FROM leisureentity WHERE id = :id")
+    suspend fun getLeisure(id: Long): LeisureEntity
+
 }
