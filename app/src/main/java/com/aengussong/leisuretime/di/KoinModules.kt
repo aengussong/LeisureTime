@@ -28,8 +28,9 @@ val dataModule = module {
     single { IncrementLeisureUseCase(get()) }
     single { RenameLeisureUseCase(get()) }
     single { RemoveLeisureUseCase(get()) }
+    single { DropCountersUseCase(get()) }
 }
 
 val viewModelModule = module {
-    viewModel { LeisureDataViewModel(get(), get(), get(), get(), get()) }
+    viewModel { LeisureDataViewModel(get(), get(), get(), get(), get(), get()) }
 }

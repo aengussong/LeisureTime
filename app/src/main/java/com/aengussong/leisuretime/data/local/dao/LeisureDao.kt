@@ -5,6 +5,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import com.aengussong.leisuretime.data.local.entity.LeisureEntity
+import java.util.*
 
 @Dao
 interface LeisureDao {
@@ -38,4 +39,6 @@ interface LeisureDao {
     @Query("DELETE FROM leisureentity WHERE ancestry LIKE (SELECT ancestry FROM leisureentity WHERE id = :id)||'%'")
     suspend fun removeLeisure(id: Long)
 
+    @Query("UPDATE leisureentity SET counter = 0")
+    suspend fun dropCounters()
 }

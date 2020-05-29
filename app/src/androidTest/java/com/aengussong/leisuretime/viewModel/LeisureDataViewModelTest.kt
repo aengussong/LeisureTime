@@ -89,6 +89,23 @@ class LeisureDataViewModelTest : DbRelatedTest() {
         Assert.assertEquals(0, tree.children().size)
     }
 
+    @Test
+    fun dropCounters_allCountersShouldBeDrooped() = runBlocking {
+        databaseManager.populateDatabase()
+        viewModel.leisureLiveData.getOrAwaitValue().assertCounters(shouldBeZero = false)
+
+        viewModel.dropCounters().join()
+
+        viewModel.leisureLiveData.getOrAwaitValue().assertCounters(shouldBeZero = true)
+    }
+
+    private fun List<Tree<Leisure>>.assertCounters(shouldBeZero: Boolean) {
+        forEach { tree ->
+            Assert.assertEquals(shouldBeZero, tree.value.counter == 0L)
+            tree.children().assertCounters(shouldBeZero)
+        }
+    }
+
     private fun List<Tree<Leisure>>.findLeisure(parentRootId: Long, leisureId: Long): Leisure? {
         forEach { tree ->
             if (tree.value.id == parentRootId) {
