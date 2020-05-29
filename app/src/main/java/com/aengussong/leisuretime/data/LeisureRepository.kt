@@ -11,4 +11,5 @@ interface LeisureRepository {
     suspend fun getLeisure(id: Long): LeisureEntity
     suspend fun incrementLeisures(ids: List<Long>)
     suspend fun renameLeisure(id: Long, newName: String)
+    suspend fun removeLeisure(id: Long)
 }

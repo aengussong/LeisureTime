@@ -41,6 +41,10 @@ class LeisureRepositoryImpl : LeisureRepository, KoinComponent {
         localProvider.renameLeisure(id, newName)
     }
 
+    override suspend fun removeLeisure(id: Long) = onIO {
+        localProvider.removeLeisure(id)
+    }
+
     private suspend fun <T> onIO(block: suspend CoroutineScope.() -> T) =
         withContext(Dispatchers.IO, block = block)
 }
