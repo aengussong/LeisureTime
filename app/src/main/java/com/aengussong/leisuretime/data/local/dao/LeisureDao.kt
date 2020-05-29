@@ -35,4 +35,7 @@ interface LeisureDao {
     @Query("UPDATE leisureentity SET name = :newName WHERE id = :id")
     suspend fun renameLeisure(id: Long, newName: String)
 
+    @Query("DELETE FROM leisureentity WHERE ancestry LIKE (SELECT ancestry FROM leisureentity WHERE id = :id)||'%'")
+    suspend fun removeLeisure(id: Long)
+
 }

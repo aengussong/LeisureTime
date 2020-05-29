@@ -5,10 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aengussong.leisuretime.model.Leisure
-import com.aengussong.leisuretime.usecase.AddLeisureUseCase
-import com.aengussong.leisuretime.usecase.GetLeisureUseCase
-import com.aengussong.leisuretime.usecase.IncrementLeisureUseCase
-import com.aengussong.leisuretime.usecase.RenameLeisureUseCase
+import com.aengussong.leisuretime.usecase.*
 import com.aengussong.leisuretime.util.Tree
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -19,7 +16,8 @@ class LeisureDataViewModel(
     private val addLeisureUseCase: AddLeisureUseCase,
     getLeisureUseCase: GetLeisureUseCase,
     private val incrementLeisureUseCase: IncrementLeisureUseCase,
-    private val renameLeisureUseCase: RenameLeisureUseCase
+    private val renameLeisureUseCase: RenameLeisureUseCase,
+    private val removeLeisureUseCase: RemoveLeisureUseCase
 ) : ViewModel() {
 
     val leisureLiveData: LiveData<List<Tree<Leisure>>>
@@ -49,6 +47,12 @@ class LeisureDataViewModel(
     fun renameLeisure(leisureId: Long, newName: String): Job {
         return launchWithHandler {
             renameLeisureUseCase.execute(leisureId, newName)
+        }
+    }
+
+    fun removeEntity(leisureId: Long): Job {
+        return launchWithHandler {
+            removeLeisureUseCase.execute(leisureId)
         }
     }
 

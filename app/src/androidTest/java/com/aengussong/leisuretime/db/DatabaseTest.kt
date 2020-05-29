@@ -52,4 +52,20 @@ class DatabaseTest : DbRelatedTest() {
         Assert.assertEquals(parentEntity.counter + 1, resultParentEntity.counter)
     }
 
+    @Test
+    fun removeLeisure_leisureSubTreeShouldBeRemoved() = runBlocking {
+        databaseManager.populateDatabase()
+        val removedEntity = databaseManager.lowestSecondLevel
+        val parentEntity = databaseManager.lowestFirstLevel
+        val preDelete = leisureDao.getLeisures().getOrAwaitValue()
+        Assert.assertEquals(3, preDelete.size)
+
+        leisureDao.removeLeisure(removedEntity.id)
+
+        val postDelete = leisureDao.getLeisures().getOrAwaitValue()
+
+        Assert.assertEquals(1, postDelete.size)
+        Assert.assertEquals(parentEntity.id, postDelete.first().id)
+    }
+
 }

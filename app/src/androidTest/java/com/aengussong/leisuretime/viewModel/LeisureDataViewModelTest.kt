@@ -72,6 +72,23 @@ class LeisureDataViewModelTest : DbRelatedTest() {
         Assert.assertEquals(newName, updatedLeisureName)
     }
 
+
+    @Test
+    fun deleteLeisure_wholeBranchShouldBeDeleted() = runBlocking {
+        val dbData = databaseManager.populateDatabase()
+        val middleLevelEntity = databaseManager.lowestSecondLevel
+        val topLevelEntity = databaseManager.lowestFirstLevel
+        val preDeleteTree = viewModel.leisureLiveData.getOrAwaitValue().first()
+        Assert.assertEquals(dbData.size, preDeleteTree.levels())
+
+        viewModel.removeEntity(middleLevelEntity.id).join()
+
+        val tree = viewModel.leisureLiveData.getOrAwaitValue().first()
+        Assert.assertEquals(1, tree.levels())
+        Assert.assertEquals(topLevelEntity.id, tree.value.id)
+        Assert.assertEquals(0, tree.children().size)
+    }
+
     private fun List<Tree<Leisure>>.findLeisure(parentRootId: Long, leisureId: Long): Leisure? {
         forEach { tree ->
             if (tree.value.id == parentRootId) {
