@@ -98,9 +98,10 @@ class GetLeisureUseCaseTest {
 
         val resultTree = getLeisureUseCase.execute().getOrAwaitValue()
 
-        assertEquals(lp.id_largestCounter, resultTree[0].value.id)
+        //assert order
+        assertEquals(lp.id_longAgoUpdated, resultTree[0].value.id)
         assertEquals(lp.id_recentlyUpdated, resultTree[1].value.id)
-        assertEquals(lp.id_longAgoUpdated, resultTree[2].value.id)
+        assertEquals(lp.id_largestCounter, resultTree[2].value.id)
     }
 
     @Test
@@ -122,8 +123,9 @@ class GetLeisureUseCaseTest {
 
         assertEquals(1, resultTree.size)
         val resultChildren = resultTree.first().children()
-        assertEquals(lp.id_largestCounter, resultChildren[0].value.id)
+        //assert order
+        assertEquals(lp.id_longAgoUpdated, resultChildren[0].value.id)
         assertEquals(lp.id_recentlyUpdated, resultChildren[1].value.id)
-        assertEquals(lp.id_longAgoUpdated, resultChildren[2].value.id)
+        assertEquals(lp.id_largestCounter, resultChildren[2].value.id)
     }
 }
