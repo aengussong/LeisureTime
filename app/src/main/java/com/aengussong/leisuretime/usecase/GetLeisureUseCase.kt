@@ -18,9 +18,9 @@ class GetLeisureUseCase(private val repo: LeisureRepository) : Mapper() {
      * important comparable value, two items compared by date only if they have same counter.
      * */
     private val comparator = Comparator<Tree<Leisure>> { tree1, tree2 ->
-        val counterDiff = tree2.value.counter - tree1.value.counter
+        val counterDiff = tree1.value.counter - tree2.value.counter
         val equality = if (counterDiff == 0L) {
-            tree2.value.updated.time - tree1.value.updated.time
+            tree1.value.updated.time - tree2.value.updated.time
         } else counterDiff
         equality.toInt()
     }
