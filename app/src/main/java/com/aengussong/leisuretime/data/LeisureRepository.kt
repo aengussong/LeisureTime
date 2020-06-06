@@ -13,4 +13,6 @@ interface LeisureRepository {
     suspend fun renameLeisure(id: Long, newName: String)
     suspend fun removeLeisure(id: Long)
     suspend fun dropCounters()
+    suspend fun getLeisureCounter(id: Long): Long
+    suspend fun setCounter(id: Long, counter: Long)
 }

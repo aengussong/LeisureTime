@@ -57,6 +57,10 @@ class DatabaseManager(private val leisureDao: LeisureDao) : KoinComponent {
         }
     }
 
+    suspend fun populateDatabase(vararg leisure: LeisureEntity) {
+        leisure.forEach { leisureDao.addLeisure(it) }
+    }
+
     fun getOrderedByAncestry(): List<LeisureEntity> {
         return data.sortedWith(compareBy { it.ancestry })
     }

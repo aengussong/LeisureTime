@@ -3,6 +3,7 @@ package com.aengussong.leisuretime.viewModel
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.aengussong.leisuretime.DbRelatedTest
 import com.aengussong.leisuretime.LeisureDataViewModel
+import com.aengussong.leisuretime.data.local.entity.LeisureEntity
 import com.aengussong.leisuretime.model.Leisure
 import com.aengussong.leisuretime.util.AncestryBuilder
 import com.aengussong.leisuretime.util.Tree
@@ -14,6 +15,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.koin.test.get
 import org.koin.test.inject
+import java.util.*
 
 
 class LeisureDataViewModelTest : DbRelatedTest() {
@@ -99,6 +101,19 @@ class LeisureDataViewModelTest : DbRelatedTest() {
         viewModel.leisureLiveData.getOrAwaitValue().assertCounters(shouldBeZero = true)
     }
 
+    @Test
+    fun decrementCounter_counterShouldBeDecremented() = runBlocking {
+        val counter = 5L
+        val testEntity = genericLeisure().copy(counter = counter)
+        databaseManager.populateDatabase(testEntity)
+
+        viewModel.decrementLeisure(testEntity.id).join()
+
+        val result = viewModel.leisureLiveData.getOrAwaitValue()
+        val resultLeisure = result.findLeisure(testEntity.id)
+        Assert.assertEquals(counter - 1, resultLeisure?.counter)
+    }
+
     private fun List<Tree<Leisure>>.assertCounters(shouldBeZero: Boolean) {
         forEach { tree ->
             Assert.assertEquals(shouldBeZero, tree.value.counter == 0L)
@@ -124,6 +139,14 @@ class LeisureDataViewModelTest : DbRelatedTest() {
         }
         return null
     }
+
+    private fun genericLeisure() = LeisureEntity(
+        id = 1L,
+        name = "generic",
+        counter = 1L,
+        updated = Date(),
+        ancestry = AncestryBuilder().toString()
+    )
 }
 
 
