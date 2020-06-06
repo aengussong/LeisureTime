@@ -41,4 +41,10 @@ interface LeisureDao {
 
     @Query("UPDATE leisureentity SET counter = 0")
     suspend fun dropCounters()
+
+    @Query("SELECT counter FROM leisureentity WHERE id = :id")
+    suspend fun getCounter(id: Long): Long
+
+    @Query("UPDATE leisureentity SET counter = :counter WHERE id = :id")
+    suspend fun updateCounter(id: Long, counter: Long)
 }

@@ -18,7 +18,8 @@ class LeisureDataViewModel(
     private val incrementLeisureUseCase: IncrementLeisureUseCase,
     private val renameLeisureUseCase: RenameLeisureUseCase,
     private val removeLeisureUseCase: RemoveLeisureUseCase,
-    private val dropCountersUseCase: DropCountersUseCase
+    private val dropCountersUseCase: DropCountersUseCase,
+    private val decrementUseCase: DecrementUseCase
 ) : ViewModel() {
 
     val leisureLiveData: LiveData<List<Tree<Leisure>>>
@@ -63,4 +64,8 @@ class LeisureDataViewModel(
 
     private fun launchWithHandler(block: suspend CoroutineScope.() -> Unit) =
         viewModelScope.launch(errorHandler, block = block)
+
+    fun decrementLeisure(leisureId: Long) = launchWithHandler {
+        decrementUseCase.execute(leisureId)
+    }
 }
