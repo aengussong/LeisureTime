@@ -3,4 +3,6 @@
     <string name="add_btn">Add</string>
     <string name="add_leisure">Add Leisure</string>
     <string name="add_leisure_cd">Add leisure</string>
+    <string name="delete_leisure">Delete Leisure</string>
+    <string name="decrement_leisure">Decrement Counter</string>
 </resources>

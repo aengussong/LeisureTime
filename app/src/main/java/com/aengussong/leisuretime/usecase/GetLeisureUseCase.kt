@@ -26,11 +26,13 @@ class GetLeisureUseCase(private val repo: LeisureRepository) : Mapper() {
     }
 
 
-    fun execute(): LiveData<List<Tree<Leisure>>> {
+    fun getLeisures(): LiveData<List<Tree<Leisure>>> {
         return Transformations.map(repo.getLeisures()) { list: List<LeisureEntity> ->
             list.toLeisureHierarchy()
         }
     }
+
+    fun getLeisure(id: Long) = repo.observeLeisure(id)
 
     /**
      * Current db implementation returns entities ordered by ancestry, so all root elements are

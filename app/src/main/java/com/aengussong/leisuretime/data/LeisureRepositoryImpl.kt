@@ -57,6 +57,8 @@ class LeisureRepositoryImpl : LeisureRepository, KoinComponent {
         localProvider.updateCounter(id, counter)
     }
 
+    override fun observeLeisure(id: Long) = localProvider.observeLeisure(id)
+
     private suspend fun <T> onIO(block: suspend CoroutineScope.() -> T) =
         withContext(Dispatchers.IO, block = block)
 }

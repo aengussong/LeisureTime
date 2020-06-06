@@ -19,4 +19,23 @@
         <item name="android:textSize">@dimen/text_normal</item>
     </style>
 
+    <style name="NodeText.Title">
+        <item name="android:textSize">@dimen/text_large</item>
+        <item name="android:gravity">center_horizontal</item>
+    </style>
+
+    <style name="Button" parent="TextAppearance.AppCompat.Button">
+        <item name="android:layout_height">@dimen/button_height</item>
+        <item name="android:layout_margin">@dimen/padding_normal</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <style name="Button.Info">
+        <item name="android:background">@color/kaitoke_green</item>
+    </style>
+
+    <style name="Button.Attention">
+        <item name="android:background">@color/chestnut_rose</item>
+    </style>
 </resources>

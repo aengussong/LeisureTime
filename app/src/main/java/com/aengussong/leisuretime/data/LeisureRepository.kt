@@ -15,4 +15,5 @@ interface LeisureRepository {
     suspend fun dropCounters()
     suspend fun getLeisureCounter(id: Long): Long
     suspend fun setCounter(id: Long, counter: Long)
+    fun observeLeisure(id: Long): LiveData<LeisureEntity>
 }
