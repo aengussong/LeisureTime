@@ -47,9 +47,12 @@ class LeisureProvider() {
         )
     }
 
-    /**
-     * @returns the most generic leisure entity, which should not be used in batch operations
-     * with another entities due to possible id conflict
-     * */
-    fun getGenericEntity() = LeisureEntity(1L, "generic", 0, Date(), rootAncestry)
+    companion object {
+        /**
+         * @returns the most generic leisure entity, which should not be used in batch operations
+         * with another entities due to possible id conflict
+         * */
+        fun getGenericEntity() =
+            LeisureEntity(1L, "generic", 0, Date(), AncestryBuilder().toString())
+    }
 }

@@ -18,7 +18,7 @@ class IncrementLeisureUseCaseTest {
         val ancestryList = listOf(1L, 2L, 3L, 4L, 5L)
         val ancestry = AncestryBuilder().addChildren(ancestryList).toString()
         val initialCounter = 3L
-        val incrementedLeisure = LeisureProvider().getGenericEntity()
+        val incrementedLeisure = LeisureProvider.getGenericEntity()
             .copy(id = 6L, counter = initialCounter, ancestry = ancestry)
         coEvery { repo.getLeisure(incrementedLeisure.id) } returns incrementedLeisure
         val idsSlot = slot<List<Long>>()

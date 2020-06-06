@@ -39,6 +39,9 @@ interface LeisureDao {
     @Query("DELETE FROM leisureentity WHERE ancestry LIKE (SELECT ancestry FROM leisureentity WHERE id = :id)||'%'")
     suspend fun removeLeisure(id: Long)
 
+    @Query("DELETE FROM leisureentity WHERE id = :id")
+    suspend fun removeRootLeisure(id: Long)
+
     @Query("UPDATE leisureentity SET counter = 0")
     suspend fun dropCounters()
 
