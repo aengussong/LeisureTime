@@ -33,6 +33,12 @@ class MainActivity : AppCompatActivity() {
     private val onNodeClickListener =
         TreeNode.TreeNodeClickListener { _, value -> viewModel.incrementCounter((value as Leisure).id) }
 
+    private val onNodeLongCLickListener =
+        TreeNode.TreeNodeLongClickListener { _, value ->
+            startActivity(NodeDetailsActivity.getIntent(this, (value as Leisure).id))
+            true
+        }
+
     private val onAddSubNodeClickListener = { parentId: Long -> showDialog(parentId) }
 
     private fun displayTree(list: List<Tree<Leisure>>) {
@@ -56,6 +62,7 @@ class MainActivity : AppCompatActivity() {
             setDefaultAnimation(true)
             setDefaultContainerStyle(R.style.TreeNodeStyleCustom)
             setDefaultNodeClickListener(onNodeClickListener)
+            setDefaultNodeLongClickListener(onNodeLongCLickListener)
         }
         container.addView(tView.view)
     }

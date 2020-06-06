@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/asparagus"
+    tools:context=".ui.NodeDetailsActivity">
+
+    <Button
+        android:id="@+id/decrement"
+        style="@style/Button.Info"
+        android:layout_width="match_parent"
+        android:layout_above="@id/delete"
+        android:text="@string/decrement_leisure" />
+
+    <Button
+        android:id="@+id/delete"
+        style="@style/Button.Attention"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:text="@string/delete_leisure" />
+
+    <TextView
+        android:id="@+id/node_name"
+        style="@style/NodeText.Title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Test" />
+
+    <TextView
+        android:id="@+id/node_counter"
+        style="@style/NodeText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/node_name"
+        android:gravity="center_horizontal"
+        tools:text="24" />
+
+</RelativeLayout>

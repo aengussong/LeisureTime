@@ -45,7 +45,7 @@ class GetLeisureUseCaseTest {
 
         every { repo.getLeisures() } returns MutableLiveData(listOf(first, second, third))
 
-        val resultTree = getLeisureUseCase.execute().getOrAwaitValue()
+        val resultTree = getLeisureUseCase.getLeisures().getOrAwaitValue()
 
         assertEquals(1, resultTree.size)
 
@@ -80,7 +80,7 @@ class GetLeisureUseCaseTest {
 
         every { repo.getLeisures() } returns MutableLiveData(listOf(first, second, third))
 
-        val resultTree = getLeisureUseCase.execute().getOrAwaitValue()
+        val resultTree = getLeisureUseCase.getLeisures().getOrAwaitValue()
 
         assertEquals(2, resultTree.size)
         assertEquals(1, resultTree.first().levels())
@@ -96,7 +96,7 @@ class GetLeisureUseCaseTest {
         val entities = listOf(recentlyUpdated, largestCounter, longAgoUpdated)
         every { repo.getLeisures() } returns MutableLiveData(entities)
 
-        val resultTree = getLeisureUseCase.execute().getOrAwaitValue()
+        val resultTree = getLeisureUseCase.getLeisures().getOrAwaitValue()
 
         //assert order
         assertEquals(lp.id_longAgoUpdated, resultTree[0].value.id)
@@ -119,7 +119,7 @@ class GetLeisureUseCaseTest {
 
         every { repo.getLeisures() } returns MutableLiveData(entities)
 
-        val resultTree = getLeisureUseCase.execute().getOrAwaitValue()
+        val resultTree = getLeisureUseCase.getLeisures().getOrAwaitValue()
 
         assertEquals(1, resultTree.size)
         val resultChildren = resultTree.first().children()
