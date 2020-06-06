@@ -1,9 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical"
-    android:layout_width="match_parent" android:layout_height="wrap_content">
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/padding_normal"
+    android:background="@color/hippieGreen_dark">
+
+    <ImageView
+        android:id="@+id/leisure_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/leisure_counter"
+        android:layout_alignBottom="@id/leisure_counter"
+        android:layout_alignParentEnd="true"
+        android:contentDescription="@string/add_leisure_cd"
+        android:padding="@dimen/padding_normal"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_add" />
+
     <TextView
-        android:id="@+id/name"
-        android:layout_margin="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="30dp" />
-</LinearLayout>
+        android:id="@+id/leisure_counter"
+        style="@style/NodeText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/leisure_name"
+        android:layout_alignBottom="@id/leisure_name"
+        android:layout_toStartOf="@id/leisure_add"
+        tools:text="24" />
+
+    <TextView
+        android:id="@+id/leisure_name"
+        style="@style/NodeText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@id/leisure_counter"
+        tools:text="Test" />
+
+</RelativeLayout>
