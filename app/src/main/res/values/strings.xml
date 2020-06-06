@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">LeisureTime</string>
     <string name="add_btn">Add</string>
+    <string name="add_leisure">Add Leisure</string>
+    <string name="add_leisure_cd">Add leisure</string>
 </resources>
