@@ -16,6 +16,14 @@ class DatabaseManager(private val leisureDao: LeisureDao) : KoinComponent {
 
     private val lowestCounter = 2L
 
+    /*---------------GENERIC----------------------*/
+    val genericEntity = LeisureEntity(
+        id = 0L,
+        name = "generic",
+        counter = 0L,
+        ancestry = AncestryBuilder().toString()
+    )
+
     /*---------------FIRST LEVEL------------------*/
     val lowestFirstLevel =
         LeisureEntity(
@@ -63,5 +71,20 @@ class DatabaseManager(private val leisureDao: LeisureDao) : KoinComponent {
 
     fun getOrderedByAncestry(): List<LeisureEntity> {
         return data.sortedWith(compareBy { it.ancestry })
+    }
+
+    suspend fun populateDatabaseWithSiblings(
+        rootLeisure: LeisureEntity,
+        siblingsCount: Int
+    ): List<LeisureEntity> {
+        val id = leisureDao.addLeisure(rootLeisure)
+        val ancestry = AncestryBuilder(rootLeisure.ancestry).addChild(id).toString()
+        val siblings = mutableListOf<LeisureEntity>()
+        for (i in 0 until siblingsCount) {
+            val leisure = genericEntity.copy(ancestry = ancestry)
+            val id = leisureDao.addLeisure(leisure)
+            siblings.add(leisure.copy(id = id))
+        }
+        return siblings
     }
 }

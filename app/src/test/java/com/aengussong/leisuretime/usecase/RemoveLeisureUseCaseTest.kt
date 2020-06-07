@@ -17,11 +17,13 @@ class RemoveLeisureUseCaseTest {
         val leisure = LeisureProvider.getGenericEntity()
             .copy(ancestry = AncestryBuilder().addChild(4).toString())
         coEvery { repo.removeLeisure(leisure.id) } just Runs
-        coEvery { repo.getLeisure(leisure.id) } returns leisure
+        coEvery { repo.removeLeisures(any()) } just Runs
+        coEvery { repo.getAncestry(leisure.id) } returns leisure.ancestry
 
         useCase.execute(leisure.id)
 
         coVerify { repo.removeLeisure(leisure.id) }
+        coVerify { repo.removeLeisures(any()) }
     }
 
     @Test
@@ -29,14 +31,14 @@ class RemoveLeisureUseCaseTest {
         val leisure =
             LeisureProvider.getGenericEntity().copy(ancestry = AncestryBuilder().toString())
         coEvery { repo.removeLeisure(leisure.id) } just Runs
-        coEvery { repo.removeRootLeisure(leisure.id) } just Runs
-        coEvery { repo.getLeisure(leisure.id) } returns leisure
+        coEvery { repo.removeLeisures(any()) } just Runs
+        coEvery { repo.getAncestry(leisure.id) } returns leisure.ancestry
 
 
         useCase.execute(leisure.id)
 
-        coVerify(exactly = 0) { repo.removeLeisure(leisure.id) }
-        coVerify(exactly = 1) { repo.removeRootLeisure(leisure.id) }
+        coVerify(exactly = 1) { repo.removeLeisure(leisure.id) }
+        coVerify(exactly = 0) { repo.removeLeisures(any()) }
     }
 
 }

@@ -6,11 +6,14 @@ import com.aengussong.leisuretime.util.AncestryBuilder
 class RemoveLeisureUseCase(private val repo: LeisureRepository) {
 
     suspend fun execute(id: Long) {
-        val isRoot = AncestryBuilder(repo.getLeisure(id).ancestry).isRoot()
-        if (isRoot) {
-            repo.removeRootLeisure(id)
-        } else {
-            repo.removeLeisure(id)
+        val ancestry = repo.getAncestry(id)
+        val isRoot = AncestryBuilder(ancestry).isRoot()
+        if (!isRoot) {
+            val childrenAncestry = AncestryBuilder(ancestry).addChild(id).toString()
+            //remove children of leisure
+            repo.removeLeisures(childrenAncestry)
         }
+        //remove leisure
+        repo.removeLeisure(id)
     }
 }

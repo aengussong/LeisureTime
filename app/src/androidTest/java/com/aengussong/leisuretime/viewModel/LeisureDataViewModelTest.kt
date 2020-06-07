@@ -16,6 +16,7 @@ import org.junit.Test
 import org.koin.test.get
 import org.koin.test.inject
 import java.util.*
+import kotlin.NoSuchElementException
 
 
 class LeisureDataViewModelTest : DbRelatedTest() {
@@ -92,6 +93,20 @@ class LeisureDataViewModelTest : DbRelatedTest() {
     }
 
     @Test
+    fun deleteLeisure_leisureSiblingsShouldNotBeDeleted() = runBlocking {
+        val rootEntity = databaseManager.genericEntity
+        val siblings = databaseManager.populateDatabaseWithSiblings(rootEntity, 3)
+        val entityToDelete = siblings.first()
+
+        viewModel.removeEntity(entityToDelete.id).join()
+
+        val tree = viewModel.leisureLiveData.getOrAwaitValue()
+        val rootAncestryStack = AncestryBuilder(entityToDelete.ancestry).getAncestryStack()
+        val siblingsAfterDelete = tree.findChildren(rootAncestryStack)
+        Assert.assertEquals(siblings.size - 1, siblingsAfterDelete.size)
+    }
+
+    @Test
     fun dropCounters_allCountersShouldBeDrooped() = runBlocking {
         databaseManager.populateDatabase()
         viewModel.leisureLiveData.getOrAwaitValue().assertCounters(shouldBeZero = false)
@@ -121,6 +136,25 @@ class LeisureDataViewModelTest : DbRelatedTest() {
         }
     }
 
+    private fun List<Tree<Leisure>>.findChildren(ancestryStack: Stack<Long>): List<Leisure> {
+        if (ancestryStack.isEmpty()) {
+            val children = mutableListOf<Leisure>()
+            forEach {
+                children.add(it.value)
+            }
+            return children
+        }
+
+        val ancestry = ancestryStack.pop()
+        forEach {
+            if (it.value.id == ancestry) {
+                return@findChildren it.children().findChildren(ancestryStack)
+            }
+        }
+
+        throw NoSuchElementException("Can't find entity with id $ancestry")
+    }
+
     private fun List<Tree<Leisure>>.findLeisure(parentRootId: Long, leisureId: Long): Leisure? {
         forEach { tree ->
             if (tree.value.id == parentRootId) {
@@ -148,5 +182,3 @@ class LeisureDataViewModelTest : DbRelatedTest() {
         ancestry = AncestryBuilder().toString()
     )
 }
-
-
