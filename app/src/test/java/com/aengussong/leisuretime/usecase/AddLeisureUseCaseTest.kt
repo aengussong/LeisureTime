@@ -4,7 +4,10 @@ import com.aengussong.leisuretime.data.LeisureRepository
 import com.aengussong.leisuretime.data.local.entity.LeisureEntity
 import com.aengussong.leisuretime.testUtils.CoroutineTestRule
 import com.aengussong.leisuretime.util.AncestryBuilder
-import io.mockk.*
+import io.mockk.CapturingSlot
+import io.mockk.coEvery
+import io.mockk.mockk
+import io.mockk.slot
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert
@@ -68,7 +71,7 @@ internal class AddLeisureUseCaseTest {
         coEvery {
             val addedLeisure = leisureSlot?.let { capture(leisureSlot) } ?: any()
             repo.addLeisure(addedLeisure)
-        } just Runs
+        } returns 0L
 
         parentId?.let { ancestryBuilder.addChild(parentId) }
 

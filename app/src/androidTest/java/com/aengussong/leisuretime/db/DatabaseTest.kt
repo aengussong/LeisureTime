@@ -67,14 +67,14 @@ class DatabaseTest : DbRelatedTest() {
     }
 
     @Test
-    fun removeLeisure_leisureSubTreeShouldBeRemoved() = runBlocking {
+    fun removeLeisureByAncestry_leisureSubTreeShouldBeRemoved() = runBlocking {
         databaseManager.populateDatabase()
         val removedEntity = databaseManager.lowestSecondLevel
         val parentEntity = databaseManager.lowestFirstLevel
         val preDelete = leisureDao.getLeisures().getOrAwaitValue()
         Assert.assertEquals(3, preDelete.size)
 
-        leisureDao.removeLeisure(removedEntity.id)
+        leisureDao.removeLeisures(removedEntity.ancestry)
 
         val postDelete = leisureDao.getLeisures().getOrAwaitValue()
 

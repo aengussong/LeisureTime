@@ -11,7 +11,7 @@ import java.util.*
 interface LeisureDao {
 
     @Insert
-    suspend fun addLeisure(leisure: LeisureEntity)
+    suspend fun addLeisure(leisure: LeisureEntity): Long
 
     @Query("SELECT * FROM leisureentity ORDER BY ancestry")
     fun getLeisures(): LiveData<List<LeisureEntity>>
@@ -36,11 +36,11 @@ interface LeisureDao {
     @Query("UPDATE leisureentity SET name = :newName WHERE id = :id")
     suspend fun renameLeisure(id: Long, newName: String)
 
-    @Query("DELETE FROM leisureentity WHERE ancestry LIKE (SELECT ancestry FROM leisureentity WHERE id = :id)||'%'")
+    @Query("DELETE FROM leisureentity WHERE id = :id")
     suspend fun removeLeisure(id: Long)
 
-    @Query("DELETE FROM leisureentity WHERE id = :id")
-    suspend fun removeRootLeisure(id: Long)
+    @Query("DELETE FROM LeisureEntity WHERE ancestry LIKE :ancestry||'%'")
+    suspend fun removeLeisures(ancestry: String)
 
     @Query("UPDATE leisureentity SET counter = 0")
     suspend fun dropCounters()
