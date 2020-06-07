@@ -3,9 +3,7 @@ package com.aengussong.leisuretime.ui
 import android.os.Bundle
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import com.aengussong.leisuretime.LeisureDataViewModel
 import com.aengussong.leisuretime.R
 import com.aengussong.leisuretime.adapter.LeisureViewHolder
 import com.aengussong.leisuretime.model.Leisure
@@ -13,11 +11,8 @@ import com.aengussong.leisuretime.util.Tree
 import com.unnamed.b.atv.model.TreeNode
 import com.unnamed.b.atv.view.AndroidTreeView
 import kotlinx.android.synthetic.main.activity_main.*
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class MainActivity : AppCompatActivity() {
-
-    private val viewModel: LeisureDataViewModel by viewModel()
+class MainActivity : LeisureDataActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

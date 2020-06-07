@@ -3,16 +3,13 @@ package com.aengussong.leisuretime.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import com.aengussong.leisuretime.LeisureDataViewModel
 import com.aengussong.leisuretime.R
 import kotlinx.android.synthetic.main.activity_node_details.*
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 private const val KEY_LEISURE_ID = "key_leisure"
 
-class NodeDetailsActivity : AppCompatActivity() {
+class NodeDetailsActivity : LeisureDataActivity() {
 
     companion object {
         fun getIntent(context: Context, leisureId: Long) =
@@ -20,8 +17,6 @@ class NodeDetailsActivity : AppCompatActivity() {
                 putExtra(KEY_LEISURE_ID, leisureId)
             }
     }
-
-    private val viewModel: LeisureDataViewModel by viewModel()
 
     private val leisureId: Long by lazy { intent.getLongExtra(KEY_LEISURE_ID, -1L) }
 
