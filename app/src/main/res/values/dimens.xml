@@ -6,4 +6,5 @@
     <dimen name="scroll_bottom_padding">60dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="button_height">48dp</dimen>
+    <dimen name="node_indent">20dp</dimen>
 </resources>
