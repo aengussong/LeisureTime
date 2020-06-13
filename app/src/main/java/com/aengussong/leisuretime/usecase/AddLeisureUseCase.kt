@@ -7,20 +7,16 @@ import com.aengussong.leisuretime.util.AncestryBuilder
 class AddLeisureUseCase(private val repo: LeisureRepository) {
 
     suspend fun execute(name: String, parentId: Long? = null) {
-        val leisure = createLeisure(name, parentId)
-        repo.addLeisure(leisure)
-    }
-
-    private suspend fun createLeisure(name: String, parentId: Long?): LeisureEntity {
-        return parentId?.let {
+        val leisure = parentId?.let {
             createSubLeisure(name, it)
         } ?: createRootLeisure(name)
+        repo.addLeisure(leisure)
     }
 
     private suspend fun createSubLeisure(name: String, parentId: Long): LeisureEntity {
         val parentAncestry = repo.getAncestry(parentId)
         val ancestry = AncestryBuilder(parentAncestry).addChild(parentId).toString()
-        val counter = repo.getLowestCounter(parentAncestry)
+        val counter = repo.getLowestCounter(ancestry)
         return LeisureEntity(name, counter, ancestry)
     }
 

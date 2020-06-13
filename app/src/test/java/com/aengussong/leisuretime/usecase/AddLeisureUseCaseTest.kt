@@ -4,10 +4,7 @@ import com.aengussong.leisuretime.data.LeisureRepository
 import com.aengussong.leisuretime.data.local.entity.LeisureEntity
 import com.aengussong.leisuretime.testUtils.CoroutineTestRule
 import com.aengussong.leisuretime.util.AncestryBuilder
-import io.mockk.CapturingSlot
-import io.mockk.coEvery
-import io.mockk.mockk
-import io.mockk.slot
+import io.mockk.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert
@@ -49,22 +46,29 @@ internal class AddLeisureUseCaseTest {
 
     @Test
     fun `add leisure - should have counter as low as lowest on level`() = runBlocking {
-        val lowestCounter = 2L
-        val leisureSlot = slot<LeisureEntity>()
-        val expected = mockLeisureCreation(leisureSlot, FAKE_PARENT_ID, lowestCounter)
+        val ancestryBuilder = AncestryBuilder()
+        val parentAncestry = ancestryBuilder.toString()
+        val childAncestry = ancestryBuilder.addChild(FAKE_PARENT_ID).toString()
+        val lowestCounter = 3L
+        coEvery { repo.getAncestry(FAKE_PARENT_ID) } returns parentAncestry
+        coEvery { repo.getLowestCounter(any()) } returns lowestCounter
+        val entitySlot = slot<LeisureEntity>()
+        coEvery { repo.addLeisure(capture(entitySlot)) } returns 0L
+        val expected = createLeisure("test", lowestCounter, childAncestry)
 
         useCase.execute(expected.name, FAKE_PARENT_ID)
 
-        val result = leisureSlot.captured
+        val result = entitySlot.captured
         assertLeisureCounters(expected, result)
+        coVerify { repo.getLowestCounter(childAncestry) }
     }
 
     private fun mockLeisureCreation(
         leisureSlot: CapturingSlot<LeisureEntity>? = null,
         parentId: Long?,
-        lowestCounter: Long = 4L,
         name: String = "fake"
     ): LeisureEntity {
+        val lowestCounter = 2L
         val ancestryBuilder = AncestryBuilder()
         coEvery { repo.getLowestCounter(any()) } returns lowestCounter
         coEvery { repo.getAncestry(any()) } returns ancestryBuilder.toString()
