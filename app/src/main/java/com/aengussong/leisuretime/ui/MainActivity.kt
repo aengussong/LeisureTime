@@ -1,56 +1,80 @@
 package com.aengussong.leisuretime.ui
 
-import android.content.Intent
 import android.os.Bundle
-import android.view.View
-import androidx.appcompat.app.AppCompatActivity
+import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.aengussong.leisuretime.R
-import com.aengussong.leisuretime.adapter.LeisureAdapter
-import com.aengussong.leisuretime.app.LeisureApp
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import com.aengussong.leisuretime.adapter.LeisureViewHolder
+import com.aengussong.leisuretime.model.Leisure
+import com.aengussong.leisuretime.util.Tree
+import com.unnamed.b.atv.model.TreeNode
+import com.unnamed.b.atv.view.AndroidTreeView
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity() {
-
-    private val adapter = LeisureAdapter()
+class MainActivity : LeisureDataActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        fab.setOnClickListener { openAddActivity() }
+        viewModel.leisureLiveData.observe(this, Observer {
+            displayTree(it)
+        })
 
-        recycler_view.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-        recycler_view.hasFixedSize()
-        recycler_view.adapter = adapter
+        fab.setOnClickListener { showDialog() }
+    }
 
-        adapter.onClickListener = View.OnClickListener { v ->
-//            val position = recycler_view.getChildAdapterPosition(v)
-//            val leisureEntity = adapter.list[position]
-//            Observable.fromCallable {
-//                LeisureApp.db.leisureDao().updateLeisure(leisureEntity.name, leisureEntity.counter + 1)
-//            }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).subscribe()
+    private val onNodeClickListener =
+        TreeNode.TreeNodeClickListener { _, value -> viewModel.incrementCounter((value as Leisure).id) }
+
+    private val onNodeLongCLickListener =
+        TreeNode.TreeNodeLongClickListener { _, value ->
+            startActivity(NodeDetailsActivity.getIntent(this, (value as Leisure).id))
+            true
         }
+
+    private val onAddSubNodeClickListener = { parentId: Long -> showDialog(parentId) }
+
+    private fun displayTree(list: List<Tree<Leisure>>) {
+        container.removeAllViews()
+
+        val root = TreeNode.root()
+
+        fun addNode(parent: TreeNode, list: List<Tree<Leisure>>) {
+            list.forEach { tree ->
+                val childNode = TreeNode(tree.value)
+                    .setViewHolder(LeisureViewHolder(this, container, onAddSubNodeClickListener))
+                    .setExpanded(true)
+                parent.addChild(childNode)
+                addNode(childNode, tree.children())
+            }
+        }
+
+        addNode(root, list)
+
+        val tView = AndroidTreeView(this, root).apply {
+            setDefaultAnimation(true)
+            setDefaultContainerStyle(R.style.TreeNodeStyleCustom)
+            setDefaultNodeClickListener(onNodeClickListener)
+            setDefaultNodeLongClickListener(onNodeLongCLickListener)
+        }
+        container.addView(tView.view)
     }
 
-    override fun onResume() {
-        super.onResume()
-        fillRecycler()
+    private fun showDialog(parentId: Long? = null) {
+        val input = EditText(this)
+        AlertDialog.Builder(this)
+            .setTitle(R.string.add_leisure)
+            .setView(input)
+            .setPositiveButton(android.R.string.ok) { _, _ ->
+                viewModel.addLeisure(
+                    input.text.toString(),
+                    parentId
+                )
+            }
+            .setNegativeButton(android.R.string.cancel) { dialog, _ -> dialog.cancel() }
+            .show()
     }
 
-    private fun openAddActivity() {
-        val intent = Intent(this, AddActivity::class.java)
-        startActivity(intent)
-    }
-
-    private fun fillRecycler() {
-//        LeisureApp.db.leisureDao().getLeisures().observe(this, Observer {
-//            adapter.updateList(it)
-//        })
-    }
 }

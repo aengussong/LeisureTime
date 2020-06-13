@@ -45,6 +45,10 @@ class LeisureRepositoryImpl : LeisureRepository, KoinComponent {
         localProvider.removeLeisure(id)
     }
 
+    override suspend fun removeLeisures(ancestry: String) = onIO {
+        localProvider.removeLeisures(ancestry)
+    }
+
     override suspend fun dropCounters() = onIO {
         localProvider.dropCounters()
     }
@@ -57,9 +61,7 @@ class LeisureRepositoryImpl : LeisureRepository, KoinComponent {
         localProvider.updateCounter(id, counter)
     }
 
-    override suspend fun removeRootLeisure(id: Long) = onIO {
-        localProvider.removeRootLeisure(id)
-    }
+    override fun observeLeisure(id: Long) = localProvider.observeLeisure(id)
 
     private suspend fun <T> onIO(block: suspend CoroutineScope.() -> T) =
         withContext(Dispatchers.IO, block = block)

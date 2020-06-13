@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
+    <color name="colorPrimary">@color/hippieGreen</color>
+    <color name="colorPrimaryDark">@color/hippieGreen_dark</color>
+    <color name="colorAccent">@color/asparagus_dark</color>
+    <color name="hippieGreen">#57834E</color>
+    <color name="hippieGreen_dark">#355D2E</color>
+    <color name="asparagus">#7CA86E</color>
+    <color name="asparagus_dark">#4C7642</color>
+    <color name="chestnut_rose">#CF6573</color>
+    <color name="kaitoke_green">#15502A</color>
 </resources>

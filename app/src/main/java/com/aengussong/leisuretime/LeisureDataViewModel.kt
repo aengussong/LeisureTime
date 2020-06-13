@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 
 class LeisureDataViewModel(
     private val addLeisureUseCase: AddLeisureUseCase,
-    getLeisureUseCase: GetLeisureUseCase,
+    private val getLeisureUseCase: GetLeisureUseCase,
     private val incrementLeisureUseCase: IncrementLeisureUseCase,
     private val renameLeisureUseCase: RenameLeisureUseCase,
     private val removeLeisureUseCase: RemoveLeisureUseCase,
@@ -24,14 +24,14 @@ class LeisureDataViewModel(
 
     val leisureLiveData: LiveData<List<Tree<Leisure>>>
         get() = _leisureLiveData
-    val errorLiveData: LiveData<String>
+    val errorLiveData: LiveData<Throwable>
         get() = _errorLiveData
 
-    private val _errorLiveData = MutableLiveData<String>()
-    private val _leisureLiveData = getLeisureUseCase.execute()
+    private val _errorLiveData = MutableLiveData<Throwable>()
+    private val _leisureLiveData = getLeisureUseCase.getLeisures()
 
     private val errorHandler = CoroutineExceptionHandler { _, throwable ->
-        _errorLiveData.value = throwable.localizedMessage
+        _errorLiveData.value = throwable
     }
 
     fun addLeisure(name: String, parentId: Long? = null): Job {
@@ -61,6 +61,8 @@ class LeisureDataViewModel(
     fun dropCounters() = launchWithHandler {
         dropCountersUseCase.execute()
     }
+
+    fun observeLeisure(id: Long) = getLeisureUseCase.getLeisure(id)
 
     private fun launchWithHandler(block: suspend CoroutineScope.() -> Unit) =
         viewModelScope.launch(errorHandler, block = block)
