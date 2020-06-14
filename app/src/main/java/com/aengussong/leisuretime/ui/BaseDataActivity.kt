@@ -7,7 +7,7 @@ import androidx.lifecycle.Observer
 import com.aengussong.leisuretime.LeisureDataViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-abstract class LeisureDataActivity : AppCompatActivity() {
+abstract class BaseDataActivity : AppCompatActivity() {
 
     protected val viewModel: LeisureDataViewModel by viewModel()
 

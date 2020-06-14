@@ -12,7 +12,7 @@ import com.unnamed.b.atv.model.TreeNode
 import com.unnamed.b.atv.view.AndroidTreeView
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : LeisureDataActivity() {
+class MainActivity : BaseDataActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
