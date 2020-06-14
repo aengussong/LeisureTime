@@ -8,11 +8,6 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="TreeNodeStyleCustom">
-        <item name="android:paddingLeft">@dimen/node_indent</item>
-        <item name="android:paddingTop">@dimen/padding_normal</item>
-    </style>
-
     <style name="NodeText" parent="Widget.AppCompat.TextView">
         <item name="android:gravity">center_vertical</item>
         <item name="android:padding">@dimen/padding_normal</item>

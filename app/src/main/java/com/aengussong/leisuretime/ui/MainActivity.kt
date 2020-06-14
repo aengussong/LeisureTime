@@ -4,62 +4,80 @@ import android.os.Bundle
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.RecyclerView
 import com.aengussong.leisuretime.R
-import com.aengussong.leisuretime.adapter.LeisureViewHolder
+import com.aengussong.leisuretime.adapter.LeisureBinder
 import com.aengussong.leisuretime.model.Leisure
 import com.aengussong.leisuretime.util.Tree
-import com.unnamed.b.atv.model.TreeNode
-import com.unnamed.b.atv.view.AndroidTreeView
 import kotlinx.android.synthetic.main.activity_main.*
+import tellh.com.recyclertreeview_lib.TreeNode
+import tellh.com.recyclertreeview_lib.TreeViewAdapter
 
 class MainActivity : BaseDataActivity() {
+
+    private lateinit var adapter: TreeViewAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        displayRv()
+        fab.setOnClickListener { showDialog() }
+
         viewModel.leisureLiveData.observe(this, Observer {
             displayTree(it)
         })
-
-        fab.setOnClickListener { showDialog() }
     }
 
-    private val onNodeClickListener =
-        TreeNode.TreeNodeClickListener { _, value -> viewModel.incrementCounter((value as Leisure).id) }
-
-    private val onNodeLongCLickListener =
-        TreeNode.TreeNodeLongClickListener { _, value ->
-            startActivity(NodeDetailsActivity.getIntent(this, (value as Leisure).id))
-            true
-        }
+    private val onNodeLongCLickListener = { id: Long ->
+        startActivity(NodeDetailsActivity.getIntent(this, id))
+    }
 
     private val onAddSubNodeClickListener = { parentId: Long -> showDialog(parentId) }
 
     private fun displayTree(list: List<Tree<Leisure>>) {
-        container.removeAllViews()
+        val nodes = arrayListOf<TreeNode<*>>()
 
-        val root = TreeNode.root()
-
-        fun addNode(parent: TreeNode, list: List<Tree<Leisure>>) {
+        fun addNode(parent: TreeNode<*>, list: List<Tree<Leisure>>) {
             list.forEach { tree ->
-                val childNode = TreeNode(tree.value)
-                    .setViewHolder(LeisureViewHolder(this, container, onAddSubNodeClickListener))
-                    .setExpanded(true)
+                val childNode = TreeNode(tree.value).apply { toggle() }
                 parent.addChild(childNode)
                 addNode(childNode, tree.children())
             }
         }
-
-        addNode(root, list)
-
-        val tView = AndroidTreeView(this, root).apply {
-            setDefaultAnimation(true)
-            setDefaultContainerStyle(R.style.TreeNodeStyleCustom)
-            setDefaultNodeClickListener(onNodeClickListener)
-            setDefaultNodeLongClickListener(onNodeLongCLickListener)
+        list.forEach {
+            val rootNode = TreeNode(it.value).apply { toggle() }
+            addNode(rootNode, it.children())
+            nodes.add(rootNode)
         }
-        container.addView(tView.view)
+
+        adapter.refresh(nodes)
+    }
+
+    private fun displayRv() {
+        val nodes = arrayListOf<TreeNode<*>>()
+        adapter = TreeViewAdapter(
+            nodes,
+            listOf(LeisureBinder(onAddSubNodeClickListener, onNodeLongCLickListener))
+        ).apply {
+            setPadding(resources.getDimension(R.dimen.node_indent).toInt())
+
+            setOnTreeNodeListener(object : TreeViewAdapter.OnTreeNodeListener {
+                override fun onClick(
+                    node: TreeNode<*>?,
+                    holder: RecyclerView.ViewHolder?
+                ): Boolean {
+                    viewModel.incrementCounter((node?.content as Leisure).id)
+                    return true
+                }
+
+                override fun onToggle(p0: Boolean, p1: RecyclerView.ViewHolder?) {
+                    TODO("Not yet implemented")
+                }
+            })
+
+            rv.adapter = this
+        }
     }
 
     private fun showDialog(parentId: Long? = null) {
