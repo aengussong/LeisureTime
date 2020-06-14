@@ -9,7 +9,7 @@ import kotlinx.android.synthetic.main.activity_node_details.*
 
 private const val KEY_LEISURE_ID = "key_leisure"
 
-class NodeDetailsActivity : LeisureDataActivity() {
+class NodeDetailsActivity : BaseDataActivity() {
 
     companion object {
         fun getIntent(context: Context, leisureId: Long) =

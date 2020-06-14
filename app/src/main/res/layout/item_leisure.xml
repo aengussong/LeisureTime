@@ -3,38 +3,47 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/hippieGreen_dark">
+    android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/leisure_add"
-        android:layout_width="wrap_content"
+    <!--Indent is assigned as padding via adapter depending on nesting level, and in order not to color
+    indent second layout introduced to just wrap items and color background. This would not be
+    necessary if indent was assigned via margin.-->
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@id/leisure_counter"
-        android:layout_alignBottom="@id/leisure_counter"
-        android:layout_alignParentEnd="true"
-        android:contentDescription="@string/add_leisure_cd"
-        android:padding="@dimen/padding_normal"
-        android:scaleType="centerCrop"
-        android:src="@drawable/ic_add" />
+        android:background="@color/hippieGreen_dark"
+        tools:ignore="UselessParent">
 
-    <TextView
-        android:id="@+id/leisure_counter"
-        style="@style/NodeText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@id/leisure_name"
-        android:layout_alignBottom="@id/leisure_name"
-        android:layout_toStartOf="@id/leisure_add"
-        tools:text="24" />
+        <ImageView
+            android:id="@+id/leisure_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/leisure_counter"
+            android:layout_alignBottom="@id/leisure_counter"
+            android:layout_alignParentEnd="true"
+            android:contentDescription="@string/add_leisure_cd"
+            android:padding="@dimen/padding_normal"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_add" />
 
-    <TextView
-        android:id="@+id/leisure_name"
-        style="@style/NodeText"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_toStartOf="@id/leisure_counter"
-        tools:text="Test" />
+        <TextView
+            android:id="@+id/leisure_counter"
+            style="@style/NodeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/leisure_name"
+            android:layout_alignBottom="@id/leisure_name"
+            android:layout_toStartOf="@id/leisure_add"
+            tools:text="24" />
+
+        <TextView
+            android:id="@+id/leisure_name"
+            style="@style/NodeText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@id/leisure_counter"
+            tools:text="Test" />
+    </RelativeLayout>
 
 </RelativeLayout>
