@@ -61,6 +61,7 @@ class MainActivity : BaseDataActivity() {
             listOf(LeisureBinder(onAddSubNodeClickListener, onNodeLongCLickListener))
         ).apply {
             setPadding(resources.getDimension(R.dimen.node_indent).toInt())
+            setHasStableIds(true)
 
             setOnTreeNodeListener(object : TreeViewAdapter.OnTreeNodeListener {
                 override fun onClick(
@@ -75,6 +76,8 @@ class MainActivity : BaseDataActivity() {
                     TODO("Not yet implemented")
                 }
             })
+
+            setStableItemIdProvider { node:TreeNode<*>? -> (node?.content as Leisure).id }
 
             rv.adapter = this
         }

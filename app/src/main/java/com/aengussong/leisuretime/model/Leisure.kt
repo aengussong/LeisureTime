@@ -4,7 +4,7 @@ import com.aengussong.leisuretime.R
 import tellh.com.recyclertreeview_lib.LayoutItemType
 import java.util.*
 
-class Leisure(
+data class Leisure(
     val id: Long,
     val name: String,
     val counter: Long,

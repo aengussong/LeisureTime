@@ -68,5 +68,5 @@ dependencies {
 
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
 
-    implementation 'com.github.TellH:RecyclerTreeView:1.2.0'
+    implementation project(':recyclertreeview-lib')
 }
