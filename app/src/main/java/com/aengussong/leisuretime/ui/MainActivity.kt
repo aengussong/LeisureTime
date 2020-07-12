@@ -51,7 +51,14 @@ class MainActivity : BaseDataActivity() {
             nodes.add(rootNode)
         }
 
+        /*For some reason, if position of the first item in the RecyclerView is changed,
+        layout manager thinks that user would be glad if this item will be still visible after
+        item movement, so it autoscrolls to the new position of the first element. To prevent
+        this behaviour saving state before changes and restoring it after was implemented,
+        preventing ANY autoscrolling from happening. */
+        val lmState = rv.layoutManager?.onSaveInstanceState()
         adapter.refresh(nodes)
+        rv.layoutManager?.onRestoreInstanceState(lmState)
     }
 
     private fun displayRv() {
