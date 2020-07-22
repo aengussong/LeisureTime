@@ -21,8 +21,8 @@ class MainActivity : BaseDataActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        displayRv()
-        fab.setOnClickListener { showDialog() }
+        setUpRecyclerView()
+        fab.setOnClickListener { showAddLeisureDialog() }
 
         viewModel.leisureLiveData.observe(this, Observer {
             displayTree(it)
@@ -33,7 +33,7 @@ class MainActivity : BaseDataActivity() {
         startActivity(NodeDetailsActivity.getIntent(this, id))
     }
 
-    private val onAddSubNodeClickListener = { parentId: Long -> showDialog(parentId) }
+    private val onAddSubNodeClickListener = { parentId: Long -> showAddLeisureDialog(parentId) }
 
     private fun displayTree(list: List<Tree<Leisure>>) {
         val nodes = arrayListOf<TreeNode<*>>()
@@ -61,7 +61,7 @@ class MainActivity : BaseDataActivity() {
         rv.layoutManager?.onRestoreInstanceState(lmState)
     }
 
-    private fun displayRv() {
+    private fun setUpRecyclerView() {
         val nodes = arrayListOf<TreeNode<*>>()
         adapter = TreeViewAdapter(
             nodes,
@@ -90,7 +90,7 @@ class MainActivity : BaseDataActivity() {
         }
     }
 
-    private fun showDialog(parentId: Long? = null) {
+    private fun showAddLeisureDialog(parentId: Long? = null) {
         val input = EditText(this)
         AlertDialog.Builder(this)
             .setTitle(R.string.add_leisure)

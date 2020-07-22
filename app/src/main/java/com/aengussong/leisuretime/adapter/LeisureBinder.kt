@@ -8,7 +8,7 @@ import tellh.com.recyclertreeview_lib.TreeNode
 import tellh.com.recyclertreeview_lib.TreeViewBinder
 
 class LeisureBinder(
-    private val onAddSub: (id: Long) -> Unit,
+    private val onAddSubItem: (id: Long) -> Unit,
     private val onLongClick: (id: Long) -> Unit
 ) : TreeViewBinder<TreeViewBinder.ViewHolder>() {
 
@@ -17,7 +17,7 @@ class LeisureBinder(
         holder?.itemView?.let {
             it.leisure_counter?.text = content.counter.toString()
             it.leisure_name?.text = content.name
-            it.leisure_add?.setOnClickListener { _ -> onAddSub(content.id) }
+            it.leisure_add?.setOnClickListener { _ -> onAddSubItem(content.id) }
             it.setOnLongClickListener { _ -> onLongClick(content.id); true }
         }
     }
