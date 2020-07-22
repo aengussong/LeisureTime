@@ -28,10 +28,10 @@
     </style>
 
     <style name="Button.Info">
-        <item name="android:background">@color/kaitoke_green</item>
+        <item name="android:background">@drawable/btn_ok_background</item>
     </style>
 
     <style name="Button.Attention">
-        <item name="android:background">@color/chestnut_rose</item>
+        <item name="android:background">@drawable/btn_cancel_background</item>
     </style>
 </resources>

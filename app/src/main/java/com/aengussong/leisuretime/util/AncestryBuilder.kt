@@ -50,15 +50,15 @@ class AncestryBuilder(private var ancestry: String = ROOT_ANCESTRY) {
      * with all other checks implemented this exception shouldn't be thrown at all. Consider to handle
      * this situation in future.
      * */
-    fun addChild(childId: Long): AncestryBuilder {
+    fun withChild(childId: Long): AncestryBuilder {
         val child = "$childId$DELIMITER"
         if (ancestry.contains(child)) throw CyclingReferenceException()
         ancestry += child
         return this
     }
 
-    fun addChildren(children: List<Long>): AncestryBuilder {
-        children.forEach { addChild(it) }
+    fun withChildren(children: List<Long>): AncestryBuilder {
+        children.forEach { withChild(it) }
         return this
     }
 

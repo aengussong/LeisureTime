@@ -8,7 +8,7 @@ class IncrementLeisureUseCase(private val repo: LeisureRepository) {
     suspend fun execute(id: Long) {
         val entity = repo.getLeisure(id)
         val idsToIncrement =
-            AncestryBuilder(entity.ancestry).addChild(entity.id).getAncestryIds()
+            AncestryBuilder(entity.ancestry).withChild(entity.id).getAncestryIds()
 
         repo.incrementLeisures(idsToIncrement)
     }
