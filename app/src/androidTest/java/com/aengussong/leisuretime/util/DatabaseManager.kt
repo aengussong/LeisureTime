@@ -9,9 +9,9 @@ class DatabaseManager(private val leisureDao: LeisureDao) : KoinComponent {
     private val rootAncestry = AncestryBuilder()
     private val firstLevelAncestry = rootAncestry.toString()
     private val firstLevelId = 1L
-    private val secondLevelAncestry = rootAncestry.addChild(firstLevelId).toString()
+    private val secondLevelAncestry = rootAncestry.withChild(firstLevelId).toString()
     private val secondLevelId = 10L
-    private val thirdLevelAncestry = rootAncestry.addChild(secondLevelId).toString()
+    private val thirdLevelAncestry = rootAncestry.withChild(secondLevelId).toString()
     private val thirdLevelId = 100L
 
     private val lowestCounter = 2L
@@ -78,7 +78,7 @@ class DatabaseManager(private val leisureDao: LeisureDao) : KoinComponent {
         siblingsCount: Int
     ): List<LeisureEntity> {
         val id = leisureDao.addLeisure(rootLeisure)
-        val ancestry = AncestryBuilder(rootLeisure.ancestry).addChild(id).toString()
+        val ancestry = AncestryBuilder(rootLeisure.ancestry).withChild(id).toString()
         val siblings = mutableListOf<LeisureEntity>()
         for (i in 0 until siblingsCount) {
             val leisure = genericEntity.copy(ancestry = ancestry)

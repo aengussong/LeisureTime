@@ -31,11 +31,11 @@ class GetLeisureUseCaseTest {
         val firstLevelId = 2L
         val firstLevelName = "firstLevel"
 
-        val secondLevelAncestry = ancestryBuilder.addChild(firstLevelId).toString()
+        val secondLevelAncestry = ancestryBuilder.withChild(firstLevelId).toString()
         val secondLevelId = 3L
         val secondLevelName = "secondLevel"
 
-        val thirdLevelAncestry = ancestryBuilder.addChild(secondLevelId).toString()
+        val thirdLevelAncestry = ancestryBuilder.withChild(secondLevelId).toString()
         val thirdLevelId = 4L
         val thirdLevelName = "thirdLevel"
 
@@ -72,7 +72,7 @@ class GetLeisureUseCaseTest {
         val firstLevelAncestry = rootAncestry.toString()
 
         val parentId = 2L
-        val secondLevelAncestry = rootAncestry.addChild(parentId).toString()
+        val secondLevelAncestry = rootAncestry.withChild(parentId).toString()
 
         val first = LeisureEntity(1L, "first", 2, Date(), firstLevelAncestry)
         val second = LeisureEntity(parentId, "second", 2, Date(), firstLevelAncestry)
@@ -109,7 +109,7 @@ class GetLeisureUseCaseTest {
         val lp = LeisureProvider()
 
         val parentId = 1L
-        val childAncestry = AncestryBuilder().addChild(parentId).toString()
+        val childAncestry = AncestryBuilder().withChild(parentId).toString()
 
         val parentEntity = LeisureEntity(parentId, "parent", 0, Date(), lp.rootAncestry)
         val largestChild = lp.getLargestCounterEntity(childAncestry)

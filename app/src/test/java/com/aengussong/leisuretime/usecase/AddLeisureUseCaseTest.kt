@@ -48,7 +48,7 @@ internal class AddLeisureUseCaseTest {
     fun `add leisure - should have counter as low as lowest on level`() = runBlocking {
         val ancestryBuilder = AncestryBuilder()
         val parentAncestry = ancestryBuilder.toString()
-        val childAncestry = ancestryBuilder.addChild(FAKE_PARENT_ID).toString()
+        val childAncestry = ancestryBuilder.withChild(FAKE_PARENT_ID).toString()
         val lowestCounter = 3L
         coEvery { repo.getAncestry(FAKE_PARENT_ID) } returns parentAncestry
         coEvery { repo.getLowestCounter(any()) } returns lowestCounter
@@ -77,7 +77,7 @@ internal class AddLeisureUseCaseTest {
             repo.addLeisure(addedLeisure)
         } returns 0L
 
-        parentId?.let { ancestryBuilder.addChild(parentId) }
+        parentId?.let { ancestryBuilder.withChild(parentId) }
 
         return createLeisure(name, lowestCounter, ancestryBuilder.toString())
     }

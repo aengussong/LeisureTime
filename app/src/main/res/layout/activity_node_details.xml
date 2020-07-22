@@ -33,7 +33,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/node_name"
-        android:gravity="center_horizontal"
-        tools:text="24" />
+        android:gravity="start"
+        tools:text="Counter: 24" />
+
+    <TextView
+        android:id="@+id/node_updated"
+        style="@style/NodeText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/node_counter"
+        android:gravity="start"
+        tools:text="Last updated: 24 Feb" />
 
 </RelativeLayout>

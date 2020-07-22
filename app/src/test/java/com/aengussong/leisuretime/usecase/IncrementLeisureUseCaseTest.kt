@@ -16,7 +16,7 @@ class IncrementLeisureUseCaseTest {
     @Test
     fun `increment counter - counter should increment`() = runBlocking {
         val ancestryList = listOf(1L, 2L, 3L, 4L, 5L)
-        val ancestry = AncestryBuilder().addChildren(ancestryList).toString()
+        val ancestry = AncestryBuilder().withChildren(ancestryList).toString()
         val initialCounter = 3L
         val incrementedLeisure = LeisureProvider.getGenericEntity()
             .copy(id = 6L, counter = initialCounter, ancestry = ancestry)

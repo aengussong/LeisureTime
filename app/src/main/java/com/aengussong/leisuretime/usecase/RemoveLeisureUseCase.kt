@@ -9,7 +9,7 @@ class RemoveLeisureUseCase(private val repo: LeisureRepository) {
         val ancestry = repo.getAncestry(id)
         val isRoot = AncestryBuilder(ancestry).isRoot()
         if (!isRoot) {
-            val childrenAncestry = AncestryBuilder(ancestry).addChild(id).toString()
+            val childrenAncestry = AncestryBuilder(ancestry).withChild(id).toString()
             //remove children of leisure
             repo.removeLeisures(childrenAncestry)
         }

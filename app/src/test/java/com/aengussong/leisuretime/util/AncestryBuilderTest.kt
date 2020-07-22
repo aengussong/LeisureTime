@@ -28,7 +28,7 @@ class AncestryBuilderTest {
 
     @Test
     fun `create ancestry with child element - should have delimiter at the end`() {
-        val builder = AncestryBuilder().addChild(2)
+        val builder = AncestryBuilder().withChild(2)
 
         val result = builder.toString()
 
@@ -46,7 +46,7 @@ class AncestryBuilderTest {
 
     @Test
     fun `check is root on non root ancestry - should return false`() {
-        val builder = AncestryBuilder().addChild(2)
+        val builder = AncestryBuilder().withChild(2)
 
         val result = builder.isRoot()
 
@@ -55,13 +55,13 @@ class AncestryBuilderTest {
 
     @Test(expected = CyclingReferenceException::class)
     fun `add cyclic reference - should throw exception`() {
-        AncestryBuilder().addChild(2).addChild(2)
+        AncestryBuilder().withChild(2).withChild(2)
     }
 
     @Test
     fun `get root parent - should return valid root parent`() {
         val rootParent = 5L
-        val builder = AncestryBuilder().addChild(rootParent).addChild(2)
+        val builder = AncestryBuilder().withChild(rootParent).withChild(2)
 
         val result = builder.getRootParent()
 
@@ -88,7 +88,7 @@ class AncestryBuilderTest {
     @Test
     fun `on non root element - root should return parent id`() {
         val parentId = 3L
-        val builder = AncestryBuilder().addChild(parentId).addChild(4).addChild(2)
+        val builder = AncestryBuilder().withChild(parentId).withChild(4).withChild(2)
 
         assertFalse(builder.isRoot())
         assertEquals(parentId, builder.getRootParent())
@@ -99,9 +99,9 @@ class AncestryBuilderTest {
         val topId = 3L
         val middleId = 2L
         val lowId = 1L
-        val builder = AncestryBuilder().addChild(topId)
-            .addChild(middleId)
-            .addChild(lowId)
+        val builder = AncestryBuilder().withChild(topId)
+            .withChild(middleId)
+            .withChild(lowId)
 
         val stack = builder.getAncestryStack()
 

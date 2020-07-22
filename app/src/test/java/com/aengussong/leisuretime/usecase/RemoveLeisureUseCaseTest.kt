@@ -15,7 +15,7 @@ class RemoveLeisureUseCaseTest {
     @Test
     fun `remove leisure - should remove entity`() = runBlocking {
         val leisure = LeisureProvider.getGenericEntity()
-            .copy(ancestry = AncestryBuilder().addChild(4).toString())
+            .copy(ancestry = AncestryBuilder().withChild(4).toString())
         coEvery { repo.removeLeisure(leisure.id) } just Runs
         coEvery { repo.removeLeisures(any()) } just Runs
         coEvery { repo.getAncestry(leisure.id) } returns leisure.ancestry

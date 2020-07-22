@@ -24,7 +24,7 @@ class DatabaseTest : DbRelatedTest() {
         val parentEntity = databaseManager.genericEntity.copy(id = 2L)
         val parentSibling = databaseManager.genericEntity.copy(id = 3L, counter = 60L)
         val childrenAncestry =
-            AncestryBuilder(parentEntity.ancestry).addChild(parentEntity.id).toString()
+            AncestryBuilder(parentEntity.ancestry).withChild(parentEntity.id).toString()
         val childSibling =
             databaseManager.genericEntity.copy(id = 5L, counter = 5L, ancestry = childrenAncestry)
         val lowestChildSibling =
@@ -46,7 +46,7 @@ class DatabaseTest : DbRelatedTest() {
         val parentEntity = databaseManager.genericEntity.copy(id = 2L)
         val parentSibling = databaseManager.genericEntity.copy(id = 3L, counter = 60L)
         val childrenAncestry =
-            AncestryBuilder(parentEntity.ancestry).addChild(parentEntity.id).toString()
+            AncestryBuilder(parentEntity.ancestry).withChild(parentEntity.id).toString()
         databaseManager.populateDatabase(parentEntity, parentSibling)
 
         val result = leisureDao.getLowestCounter(childrenAncestry)
@@ -120,6 +120,6 @@ class DatabaseTest : DbRelatedTest() {
     }
 
     private fun LeisureEntity.ancestryForChildren() =
-        AncestryBuilder(ancestry).addChild(id).toString()
+        AncestryBuilder(ancestry).withChild(id).toString()
 
 }

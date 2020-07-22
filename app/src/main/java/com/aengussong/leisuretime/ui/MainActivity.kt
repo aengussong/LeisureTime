@@ -84,14 +84,14 @@ class MainActivity : BaseDataActivity() {
                 }
             })
 
-            setStableItemIdProvider { node:TreeNode<*>? -> (node?.content as Leisure).id }
+            setStableItemIdProvider { node: TreeNode<*>? -> (node?.content as Leisure).id }
 
             rv.adapter = this
         }
     }
 
     private fun showAddLeisureDialog(parentId: Long? = null) {
-        val input = EditText(this)
+        val input = EditText(this).apply { setSingleLine() }
         AlertDialog.Builder(this)
             .setTitle(R.string.add_leisure)
             .setView(input)
