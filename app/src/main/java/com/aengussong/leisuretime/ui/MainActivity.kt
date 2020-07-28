@@ -4,11 +4,13 @@ import android.os.Bundle
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.aengussong.leisuretime.R
 import com.aengussong.leisuretime.adapter.LeisureBinder
 import com.aengussong.leisuretime.model.Leisure
 import com.aengussong.leisuretime.util.Tree
+import com.aengussong.leisuretime.util.extention.doWhileActive
 import kotlinx.android.synthetic.main.activity_main.*
 import tellh.com.recyclertreeview_lib.TreeNode
 import tellh.com.recyclertreeview_lib.TreeViewAdapter
@@ -29,11 +31,11 @@ class MainActivity : BaseDataActivity() {
         })
     }
 
-    private val onNodeLongCLickListener = { id: Long ->
+    private fun onNodeLongCLick(id: Long) =
         startActivity(NodeDetailsActivity.getIntent(this, id))
-    }
 
-    private val onAddSubNodeClickListener = { parentId: Long -> showAddLeisureDialog(parentId) }
+    private fun onAddSubNodeClick(parentId: Long) =
+        showAddLeisureDialog(parentId)
 
     private fun displayTree(list: List<Tree<Leisure>>) {
         val nodes = arrayListOf<TreeNode<*>>()
@@ -63,9 +65,18 @@ class MainActivity : BaseDataActivity() {
 
     private fun setUpRecyclerView() {
         val nodes = arrayListOf<TreeNode<*>>()
+        val binder = LeisureBinder()
+        lifecycleScope.doWhileActive {
+            val clickedId = binder.getItemClickChannel().receive()
+            onAddSubNodeClick(clickedId)
+        }
+        lifecycleScope.doWhileActive {
+            val longClickedId = binder.getItemLongClickChannel().receive()
+            onNodeLongCLick(longClickedId)
+        }
         adapter = TreeViewAdapter(
             nodes,
-            listOf(LeisureBinder(onAddSubNodeClickListener, onNodeLongCLickListener))
+            listOf(binder)
         ).apply {
             setPadding(resources.getDimension(R.dimen.node_indent).toInt())
             setHasStableIds(true)
