@@ -43,9 +43,15 @@ class GetLeisureUseCaseTest {
         val second = LeisureEntity(secondLevelId, secondLevelName, 2, Date(), secondLevelAncestry)
         val third = LeisureEntity(thirdLevelId, thirdLevelName, 2, Date(), thirdLevelAncestry)
 
-        every { repo.getLeisures() } returns MutableLiveData(listOf(first, second, third))
+        every { repo.getHierarchialLeisures() } returns MutableLiveData(
+            listOf(
+                first,
+                second,
+                third
+            )
+        )
 
-        val resultTree = getLeisureUseCase.getLeisures().getOrAwaitValue()
+        val resultTree = getLeisureUseCase.getHierarchialLeisures().getOrAwaitValue()
 
         assertEquals(1, resultTree.size)
 
@@ -78,9 +84,15 @@ class GetLeisureUseCaseTest {
         val second = LeisureEntity(parentId, "second", 2, Date(), firstLevelAncestry)
         val third = LeisureEntity(3L, "third", 2, Date(), secondLevelAncestry)
 
-        every { repo.getLeisures() } returns MutableLiveData(listOf(first, second, third))
+        every { repo.getHierarchialLeisures() } returns MutableLiveData(
+            listOf(
+                first,
+                second,
+                third
+            )
+        )
 
-        val resultTree = getLeisureUseCase.getLeisures().getOrAwaitValue()
+        val resultTree = getLeisureUseCase.getHierarchialLeisures().getOrAwaitValue()
 
         assertEquals(2, resultTree.size)
         assertEquals(1, resultTree.first().levels())
@@ -94,9 +106,9 @@ class GetLeisureUseCaseTest {
         val largestCounter = lp.getLargestCounterEntity()
         val longAgoUpdated = lp.getLongAgoUpdatedEntity(true)
         val entities = listOf(recentlyUpdated, largestCounter, longAgoUpdated)
-        every { repo.getLeisures() } returns MutableLiveData(entities)
+        every { repo.getHierarchialLeisures() } returns MutableLiveData(entities)
 
-        val resultTree = getLeisureUseCase.getLeisures().getOrAwaitValue()
+        val resultTree = getLeisureUseCase.getHierarchialLeisures().getOrAwaitValue()
 
         //assert order
         assertEquals(lp.id_longAgoUpdated, resultTree[0].value.id)
@@ -117,9 +129,9 @@ class GetLeisureUseCaseTest {
         val equalLongAgoChild = lp.getLongAgoUpdatedEntity(true, childAncestry)
         val entities = listOf(parentEntity, equalRecentChild, largestChild, equalLongAgoChild)
 
-        every { repo.getLeisures() } returns MutableLiveData(entities)
+        every { repo.getHierarchialLeisures() } returns MutableLiveData(entities)
 
-        val resultTree = getLeisureUseCase.getLeisures().getOrAwaitValue()
+        val resultTree = getLeisureUseCase.getHierarchialLeisures().getOrAwaitValue()
 
         assertEquals(1, resultTree.size)
         val resultChildren = resultTree.first().children()

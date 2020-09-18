@@ -5,6 +5,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import com.aengussong.leisuretime.data.local.entity.LeisureEntity
+import kotlinx.coroutines.flow.Flow
 import java.util.*
 
 @Dao
@@ -14,7 +15,10 @@ interface LeisureDao {
     suspend fun addLeisure(leisure: LeisureEntity): Long
 
     @Query("SELECT * FROM leisureentity ORDER BY ancestry")
-    fun getLeisures(): LiveData<List<LeisureEntity>>
+    fun getHierarchialLeisures(): LiveData<List<LeisureEntity>>
+
+    @Query("SELECT * FROM leisureentity ORDER BY counter")
+    fun getLinearLeisures(): Flow<List<LeisureEntity>>
 
     /**
      * Select lowest counter for level, e.g. if item added as child for second level element, we

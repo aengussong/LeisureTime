@@ -8,6 +8,8 @@ import com.aengussong.leisuretime.model.Leisure
 import com.aengussong.leisuretime.usecase.mapper.Mapper
 import com.aengussong.leisuretime.util.AncestryBuilder
 import com.aengussong.leisuretime.util.Tree
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import java.util.*
 import kotlin.Comparator
 
@@ -26,9 +28,16 @@ class GetLeisureUseCase(private val repo: LeisureRepository) : Mapper() {
     }
 
 
-    fun getLeisures(): LiveData<List<Tree<Leisure>>> {
-        return Transformations.map(repo.getLeisures()) { list: List<LeisureEntity> ->
+    fun getHierarchialLeisures(): LiveData<List<Tree<Leisure>>> {
+        return Transformations.map(repo.getHierarchialLeisures()) { list: List<LeisureEntity> ->
             list.toLeisureHierarchy()
+        }
+    }
+
+    fun getLinearLeisures(): Flow<List<Tree<Leisure>>> {
+        return repo.getLinearLeisures().map { list ->
+            list.map { Leisure(it.id, it.name, it.counter, it.updated) }
+                .map { Tree(it) }
         }
     }
 

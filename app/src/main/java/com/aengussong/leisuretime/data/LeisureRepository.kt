@@ -2,12 +2,15 @@ package com.aengussong.leisuretime.data
 
 import androidx.lifecycle.LiveData
 import com.aengussong.leisuretime.data.local.entity.LeisureEntity
+import com.aengussong.leisuretime.model.SortOrder
+import kotlinx.coroutines.flow.Flow
 
 interface LeisureRepository {
     suspend fun addLeisure(leisure: LeisureEntity): Long
     suspend fun getLowestCounter(ancestry: String): Long
     suspend fun getAncestry(id: Long): String
-    fun getLeisures(): LiveData<List<LeisureEntity>>
+    fun getHierarchialLeisures(): LiveData<List<LeisureEntity>>
+    fun getLinearLeisures(): Flow<List<LeisureEntity>>
     suspend fun getLeisure(id: Long): LeisureEntity
     suspend fun incrementLeisures(ids: List<Long>)
     suspend fun renameLeisure(id: Long, newName: String)
@@ -17,4 +20,6 @@ interface LeisureRepository {
     suspend fun getLeisureCounter(id: Long): Long
     suspend fun setCounter(id: Long, counter: Long)
     fun observeLeisure(id: Long): LiveData<LeisureEntity>
+    fun toggleSort()
+    fun getSortOrder(): Flow<SortOrder>
 }
