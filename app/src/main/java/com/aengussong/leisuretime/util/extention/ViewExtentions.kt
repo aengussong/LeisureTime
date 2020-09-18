@@ -31,3 +31,11 @@ inline fun <T, R : View> R.doAsync(
 fun <T> View.sendAsync(channel: Channel<T>, data: T?) {
     data?.let { doAsync { channel.send(data) } }
 }
+
+fun View.show() {
+    visibility = View.VISIBLE
+}
+
+fun View.hide() {
+    visibility = View.INVISIBLE
+}

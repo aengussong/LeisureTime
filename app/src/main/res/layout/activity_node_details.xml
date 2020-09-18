@@ -27,6 +27,15 @@
         android:layout_height="wrap_content"
         tools:text="Test" />
 
+    <EditText
+        android:id="@+id/node_name_et"
+        style="@style/NodeText.Title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:imeOptions="actionDone"
+        android:singleLine="true"
+        android:visibility="invisible" />
+
     <TextView
         android:id="@+id/node_counter"
         style="@style/NodeText"
