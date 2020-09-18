@@ -270,13 +270,25 @@ public class TreeViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     // For DiffUtil, if they are the same items, whether the contents has bean changed.
     private boolean areContentsTheSame(TreeNode oldNode, TreeNode newNode) {
-        return oldNode.getContent() != null && oldNode.getContent().equals(newNode.getContent())
-                && oldNode.isExpand() == newNode.isExpand();
+        boolean same = oldNode.getContent() != null && oldNode.getContent().equals(newNode.getContent())
+                && oldNode.isExpand() == newNode.isExpand()
+                && (
+                oldNode.getParent() == null && newNode.getParent() == null
+                        || (oldNode.getParent() != null && oldNode.getParent().equals(newNode.getParent()))
+        );
+
+        return same;
     }
 
     // judge if the same item for DiffUtil
     private boolean areItemsTheSame(TreeNode oldNode, TreeNode newNode) {
-        return oldNode.getContent() != null && oldNode.getContent().equals(newNode.getContent());
+        boolean same = oldNode.getContent() != null
+                && oldNode.getContent().equals(newNode.getContent())
+                && (
+                oldNode.getParent() == null && newNode.getParent() == null
+                        || (oldNode.getParent() != null && oldNode.getParent().equals(newNode.getParent()))
+        );
+        return same;
     }
 
     /**

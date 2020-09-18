@@ -1,6 +1,7 @@
 package tellh.com.recyclertreeview_lib;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -131,6 +132,19 @@ public class TreeNode<T extends LayoutItemType> implements Cloneable {
     }
 
     @Override
+    public boolean equals(@Nullable Object obj) {
+        if (obj == this) return true;
+        if (!(obj instanceof TreeNode)) return false;
+        TreeNode that = (TreeNode) obj;
+
+        return this.isExpand == that.isExpand
+                && this.isLocked == that.isLocked
+                && this.content.equals(that.content)
+                && (this.parent == null && that.parent == null) || (this.parent != null && this.parent.equals(that.parent))
+                && this.childList.equals(that.childList);
+    }
+
+    @Override
     public String toString() {
         return "TreeNode{" +
                 "content=" + this.content +
@@ -144,6 +158,9 @@ public class TreeNode<T extends LayoutItemType> implements Cloneable {
     protected TreeNode<T> clone() throws CloneNotSupportedException {
         TreeNode<T> clone = new TreeNode<>(this.content);
         clone.isExpand = this.isExpand;
+        if (this.parent != null) {
+            clone.parent = this.parent.clone();
+        }
         return clone;
     }
 }

@@ -70,7 +70,7 @@ class DatabaseTest : DbRelatedTest() {
         databaseManager.populateDatabase()
         val expected = databaseManager.getOrderedByAncestry()
 
-        val result = leisureDao.getLeisures().getOrAwaitValue()
+        val result = leisureDao.getHierarchialLeisures().getOrAwaitValue()
 
         Assert.assertEquals(expected, result)
     }
@@ -108,12 +108,12 @@ class DatabaseTest : DbRelatedTest() {
         databaseManager.populateDatabase()
         val removedEntity = databaseManager.lowestSecondLevel
         val parentEntity = databaseManager.lowestFirstLevel
-        val preDelete = leisureDao.getLeisures().getOrAwaitValue()
+        val preDelete = leisureDao.getHierarchialLeisures().getOrAwaitValue()
         Assert.assertEquals(3, preDelete.size)
 
         leisureDao.removeLeisures(removedEntity.ancestry)
 
-        val postDelete = leisureDao.getLeisures().getOrAwaitValue()
+        val postDelete = leisureDao.getHierarchialLeisures().getOrAwaitValue()
 
         Assert.assertEquals(1, postDelete.size)
         Assert.assertEquals(parentEntity.id, postDelete.first().id)

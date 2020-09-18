@@ -7,4 +7,5 @@
     <string name="decrement_leisure">Decrement Counter</string>
     <string name="counter_times">Counter: %d</string>
     <string name="last_updated">Last updated: %s</string>
+    <string name="menu_sort">Sort list</string>
 </resources>

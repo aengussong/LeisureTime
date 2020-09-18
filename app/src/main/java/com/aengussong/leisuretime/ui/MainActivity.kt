@@ -1,6 +1,8 @@
 package com.aengussong.leisuretime.ui
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
@@ -29,6 +31,19 @@ class MainActivity : BaseDataActivity() {
         viewModel.leisureLiveData.observe(this, Observer {
             displayTree(it)
         })
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.main_sort) {
+            viewModel.toggleSort()
+            return true
+        }
+        return false
     }
 
     private fun onNodeLongCLick(id: Long) =
