@@ -71,4 +71,8 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.2.0"
 
     implementation project(':recyclertreeview-lib')
+
+    implementation 'com.facebook.stetho:stetho:1.5.1'
+    //If you want to add a network helper
+    implementation 'com.facebook.stetho:stetho-okhttp:1.5.1'
 }
