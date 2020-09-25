@@ -11,7 +11,7 @@ import org.junit.Assert
 import org.junit.Rule
 import org.junit.Test
 
-private const val FAKE_PARENT_ID = 5L
+private const val FAKE_ID = 5L
 
 internal class AddLeisureUseCaseTest {
 
@@ -36,9 +36,9 @@ internal class AddLeisureUseCaseTest {
     @Test
     fun `add leisure - leisure entity should be added`() = runBlocking {
         val leisureSlot = slot<LeisureEntity>()
-        val expected = mockLeisureCreation(leisureSlot, FAKE_PARENT_ID)
+        val expected = mockLeisureCreation(leisureSlot, FAKE_ID)
 
-        useCase.execute(expected.name, FAKE_PARENT_ID)
+        useCase.execute(expected.name, FAKE_ID)
 
         val result = leisureSlot.captured
         assertLeisuresEqual(expected, result)
@@ -48,15 +48,37 @@ internal class AddLeisureUseCaseTest {
     fun `add leisure - should have counter as low as lowest on level`() = runBlocking {
         val ancestryBuilder = AncestryBuilder()
         val parentAncestry = ancestryBuilder.toString()
-        val childAncestry = ancestryBuilder.withChild(FAKE_PARENT_ID).toString()
+        val childAncestry = ancestryBuilder.withChild(FAKE_ID).toString()
         val lowestCounter = 3L
-        coEvery { repo.getAncestry(FAKE_PARENT_ID) } returns parentAncestry
+        coEvery { repo.getAncestry(FAKE_ID) } returns parentAncestry
         coEvery { repo.getLowestCounter(any()) } returns lowestCounter
         val entitySlot = slot<LeisureEntity>()
-        coEvery { repo.addLeisure(capture(entitySlot)) } returns 0L
+        coEvery { repo.addLeisure(capture(entitySlot)) } returns 0L //added leisure id
         val expected = createLeisure("test", lowestCounter, childAncestry)
 
-        useCase.execute(expected.name, FAKE_PARENT_ID)
+        useCase.execute(expected.name, FAKE_ID)
+
+        val result = entitySlot.captured
+        assertLeisureCounters(expected, result)
+        coVerify { repo.getLowestCounter(childAncestry) }
+    }
+
+    @Test
+    fun `add first subleisure - should have counter equal to parent`() = runBlocking {
+        val parentId = FAKE_ID
+        val parentCounter = 24L
+        val ancestryBuilder = AncestryBuilder()
+        val parentAncestry = ancestryBuilder.toString()
+        val childAncestry = ancestryBuilder.withChild(parentId).toString()
+        val lowestCounter = -1L
+        coEvery { repo.getAncestry(parentId) } returns parentAncestry
+        coEvery { repo.getLowestCounter(any()) } returns lowestCounter
+        coEvery { repo.getLeisureCounter(parentId) } returns parentCounter
+        val entitySlot = slot<LeisureEntity>()
+        coEvery { repo.addLeisure(capture(entitySlot)) } returns 0L //added leisure id
+        val expected = createLeisure("test", parentCounter, childAncestry)
+
+        useCase.execute(expected.name, parentId)
 
         val result = entitySlot.captured
         assertLeisureCounters(expected, result)
