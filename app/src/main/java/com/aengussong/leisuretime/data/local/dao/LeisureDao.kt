@@ -23,9 +23,9 @@ interface LeisureDao {
     /**
      * Select lowest counter for level, e.g. if item added as child for second level element, we
      * should find lowest counter in third level for this parent element, without elements
-     * examination on other levels
+     * examination on other levels. If there is no items, returns -1.
      * */
-    @Query("SELECT COALESCE(MIN(counter),0) FROM leisureentity WHERE ancestry = :ancestry")
+    @Query("SELECT COALESCE(MIN(counter),-1) FROM leisureentity WHERE ancestry = :ancestry")
     suspend fun getLowestCounter(ancestry: String): Long
 
     @Query("SELECT ancestry FROM leisureentity WHERE id = :id")

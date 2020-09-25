@@ -16,11 +16,17 @@ class AddLeisureUseCase(private val repo: LeisureRepository) {
     private suspend fun createSubLeisure(name: String, parentId: Long): LeisureEntity {
         val parentAncestry = repo.getAncestry(parentId)
         val ancestry = AncestryBuilder(parentAncestry).withChild(parentId).toString()
-        val counter = repo.getLowestCounter(ancestry)
+        val counter = repo.getLowestCounter(ancestry).let {
+            if (it == -1L) {
+                return@let repo.getLeisureCounter(parentId)
+            }
+            it
+        }
         return LeisureEntity(name, counter, ancestry)
     }
 
     private suspend fun createRootLeisure(name: String): LeisureEntity {
+        //root ancestry
         val ancestry = AncestryBuilder().toString()
         val counter = repo.getLowestCounter(ancestry)
         return LeisureEntity(name, counter, ancestry)

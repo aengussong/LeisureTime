@@ -21,6 +21,9 @@ class LeisureRepositoryImpl : LeisureRepository, KoinComponent {
         localProvider.addLeisure(leisure)
     }
 
+    /**
+     * @return lowest counter for the current ancestry or -1 if there are no items with such ancestry.
+     * */
     override suspend fun getLowestCounter(ancestry: String): Long = onIO {
         localProvider.getLowestCounter(ancestry)
     }
