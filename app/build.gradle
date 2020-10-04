@@ -6,7 +6,7 @@ apply plugin: 'kotlin-kapt'
 android {
     compileSdkVersion 29
     defaultConfig {
-        applicationId "com.aengussong.leisuretime"
+        applicationId "com.aengussong.prioritytime"
         minSdkVersion 22
         targetSdkVersion 29
         versionCode 1
