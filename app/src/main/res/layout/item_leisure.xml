@@ -12,7 +12,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/hippieGreen_dark"
+        android:background="@color/hippieGreen"
+        android:layout_marginBottom="2dp"
         tools:ignore="UselessParent">
 
         <ImageView

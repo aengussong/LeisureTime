@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
-    android:background="@color/asparagus">
+    android:background="@color/asparagus_dark">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv"
