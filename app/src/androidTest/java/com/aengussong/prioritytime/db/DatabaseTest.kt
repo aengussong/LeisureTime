@@ -5,7 +5,8 @@ import com.aengussong.prioritytime.DbRelatedTest
 import com.aengussong.prioritytime.data.local.dao.LeisureDao
 import com.aengussong.prioritytime.data.local.entity.LeisureEntity
 import com.aengussong.prioritytime.util.AncestryBuilder
-import com.aengussong.prioritytime.util.getOrAwaitValue
+import com.aengussong.prioritytime.util.ROOT_ANCESTRY
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert
 import org.junit.Rule
@@ -70,7 +71,7 @@ class DatabaseTest : DbRelatedTest() {
         databaseManager.populateDatabase()
         val expected = databaseManager.getOrderedByAncestry()
 
-        val result = leisureDao.getHierarchialLeisures().getOrAwaitValue()
+        val result: List<LeisureEntity> = leisureDao.getHierarchialLeisures().first()
 
         Assert.assertEquals(expected, result)
     }
@@ -108,15 +109,50 @@ class DatabaseTest : DbRelatedTest() {
         databaseManager.populateDatabase()
         val removedEntity = databaseManager.lowestSecondLevel
         val parentEntity = databaseManager.lowestFirstLevel
-        val preDelete = leisureDao.getHierarchialLeisures().getOrAwaitValue()
+        val preDelete: List<LeisureEntity> = leisureDao.getHierarchialLeisures().first()
         Assert.assertEquals(3, preDelete.size)
 
         leisureDao.removeLeisures(removedEntity.ancestry)
 
-        val postDelete = leisureDao.getHierarchialLeisures().getOrAwaitValue()
+        val postDelete: List<LeisureEntity> = leisureDao.getHierarchialLeisures().first()
 
         Assert.assertEquals(1, postDelete.size)
         Assert.assertEquals(parentEntity.id, postDelete.first().id)
+    }
+
+    @Test
+    fun getMinHierarchialLeisure_shouldReturnMinRootLeisure() = runBlocking {
+        val highCounterLeisure =
+            databaseManager.genericEntity.copy(id = 1, counter = 10, ancestry = ROOT_ANCESTRY)
+        val lowestCounterLeisure =
+            databaseManager.genericEntity.copy(id = 2, counter = 1, ancestry = ROOT_ANCESTRY)
+        databaseManager.populateDatabase(highCounterLeisure, lowestCounterLeisure)
+        databaseManager.populateDatabaseWithChildren(highCounterLeisure, 10)
+
+        val minEntity = leisureDao.getMinHierarchial(ROOT_ANCESTRY)
+
+        Assert.assertEquals(lowestCounterLeisure.id, minEntity?.id)
+    }
+
+    @Test
+    fun getMinLinearLeisure_shouldReturnLeisureWithMinCounter() = runBlocking {
+        val parent = databaseManager.genericEntity.copy(id = 1L, counter = 10L)
+        val child = databaseManager.genericEntity.copy(
+            id = 2L,
+            counter = 5L,
+            ancestry = parent.ancestryForChildren()
+        )
+        val grandchild = databaseManager.genericEntity.copy(
+            id = 3L,
+            counter = 0L,
+            ancestry = child.ancestryForChildren()
+        )
+        val anotherParent = databaseManager.genericEntity.copy(id = 4L, counter = 1L)
+        databaseManager.populateDatabase(parent, child, grandchild, anotherParent)
+
+        val minEntity = leisureDao.getMinLinear()
+
+        Assert.assertEquals(grandchild.id, minEntity?.id)
     }
 
     private fun LeisureEntity.ancestryForChildren() =

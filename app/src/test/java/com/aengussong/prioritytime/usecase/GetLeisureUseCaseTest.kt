@@ -1,14 +1,15 @@
 package com.aengussong.prioritytime.usecase
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.lifecycle.MutableLiveData
 import com.aengussong.prioritytime.data.LeisureRepository
 import com.aengussong.prioritytime.data.local.entity.LeisureEntity
 import com.aengussong.prioritytime.testUtils.LeisureProvider
-import com.aengussong.prioritytime.testUtils.getOrAwaitValue
 import com.aengussong.prioritytime.util.AncestryBuilder
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -24,7 +25,7 @@ class GetLeisureUseCaseTest {
     private val getLeisureUseCase = GetLeisureUseCase(repo)
 
     @Test
-    fun `get data with three levels - should be converted to tree hierarchy`() {
+    fun `get data with three levels - should be converted to tree hierarchy`() = runBlocking {
         val ancestryBuilder = AncestryBuilder()
 
         val firstLevelAncestry = ancestryBuilder.toString()
@@ -43,7 +44,7 @@ class GetLeisureUseCaseTest {
         val second = LeisureEntity(secondLevelId, secondLevelName, 2, Date(), secondLevelAncestry)
         val third = LeisureEntity(thirdLevelId, thirdLevelName, 2, Date(), thirdLevelAncestry)
 
-        every { repo.getHierarchialLeisures() } returns MutableLiveData(
+        every { repo.getHierarchialLeisures() } returns flowOf(
             listOf(
                 first,
                 second,
@@ -51,7 +52,7 @@ class GetLeisureUseCaseTest {
             )
         )
 
-        val resultTree = getLeisureUseCase.getHierarchialLeisures().getOrAwaitValue()
+        val resultTree = getLeisureUseCase.getHierarchialLeisures().first()
 
         assertEquals(1, resultTree.size)
 
@@ -72,43 +73,44 @@ class GetLeisureUseCaseTest {
     }
 
     @Test
-    fun `get data with several root leisures - should return several unconnected trees`() {
-        val rootAncestry = AncestryBuilder()
+    fun `get data with several root leisures - should return several unconnected trees`() =
+        runBlocking {
+            val rootAncestry = AncestryBuilder()
 
-        val firstLevelAncestry = rootAncestry.toString()
+            val firstLevelAncestry = rootAncestry.toString()
 
-        val parentId = 2L
-        val secondLevelAncestry = rootAncestry.withChild(parentId).toString()
+            val parentId = 2L
+            val secondLevelAncestry = rootAncestry.withChild(parentId).toString()
 
-        val first = LeisureEntity(1L, "first", 2, Date(), firstLevelAncestry)
-        val second = LeisureEntity(parentId, "second", 2, Date(), firstLevelAncestry)
-        val third = LeisureEntity(3L, "third", 2, Date(), secondLevelAncestry)
+            val first = LeisureEntity(1L, "first", 2, Date(), firstLevelAncestry)
+            val second = LeisureEntity(parentId, "second", 2, Date(), firstLevelAncestry)
+            val third = LeisureEntity(3L, "third", 2, Date(), secondLevelAncestry)
 
-        every { repo.getHierarchialLeisures() } returns MutableLiveData(
-            listOf(
-                first,
-                second,
-                third
+            every { repo.getHierarchialLeisures() } returns flowOf(
+                listOf(
+                    first,
+                    second,
+                    third
+                )
             )
-        )
 
-        val resultTree = getLeisureUseCase.getHierarchialLeisures().getOrAwaitValue()
+            val resultTree = getLeisureUseCase.getHierarchialLeisures().first()
 
-        assertEquals(2, resultTree.size)
-        assertEquals(1, resultTree.first().levels())
-        assertEquals(2, resultTree[1].levels())
-    }
+            assertEquals(2, resultTree.size)
+            assertEquals(1, resultTree.first().levels())
+            assertEquals(2, resultTree[1].levels())
+        }
 
     @Test
-    fun `get data - root trees should be ordered by counter and updated date`() {
+    fun `get data - root trees should be ordered by counter and updated date`() = runBlocking {
         val lp = LeisureProvider()
         val recentlyUpdated = lp.getRecentlyUpdatedEntity(true)
         val largestCounter = lp.getLargestCounterEntity()
         val longAgoUpdated = lp.getLongAgoUpdatedEntity(true)
         val entities = listOf(recentlyUpdated, largestCounter, longAgoUpdated)
-        every { repo.getHierarchialLeisures() } returns MutableLiveData(entities)
+        every { repo.getHierarchialLeisures() } returns flowOf(entities)
 
-        val resultTree = getLeisureUseCase.getHierarchialLeisures().getOrAwaitValue()
+        val resultTree = getLeisureUseCase.getHierarchialLeisures().first()
 
         //assert order
         assertEquals(lp.id_longAgoUpdated, resultTree[0].value.id)
@@ -117,7 +119,7 @@ class GetLeisureUseCaseTest {
     }
 
     @Test
-    fun `get trees - subtrees should be ordered by counter and updated date`() {
+    fun `get trees - subtrees should be ordered by counter and updated date`() = runBlocking {
         val lp = LeisureProvider()
 
         val parentId = 1L
@@ -129,9 +131,9 @@ class GetLeisureUseCaseTest {
         val equalLongAgoChild = lp.getLongAgoUpdatedEntity(true, childAncestry)
         val entities = listOf(parentEntity, equalRecentChild, largestChild, equalLongAgoChild)
 
-        every { repo.getHierarchialLeisures() } returns MutableLiveData(entities)
+        every { repo.getHierarchialLeisures() } returns flowOf(entities)
 
-        val resultTree = getLeisureUseCase.getHierarchialLeisures().getOrAwaitValue()
+        val resultTree = getLeisureUseCase.getHierarchialLeisures().first()
 
         assertEquals(1, resultTree.size)
         val resultChildren = resultTree.first().children()

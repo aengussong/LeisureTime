@@ -70,7 +70,7 @@ internal class AddLeisureUseCaseTest {
         val ancestryBuilder = AncestryBuilder()
         val parentAncestry = ancestryBuilder.toString()
         val childAncestry = ancestryBuilder.withChild(parentId).toString()
-        val lowestCounter = -1L
+        val lowestCounter = 0L
         coEvery { repo.getAncestry(parentId) } returns parentAncestry
         coEvery { repo.getLowestCounter(any()) } returns lowestCounter
         coEvery { repo.getLeisureCounter(parentId) } returns parentCounter

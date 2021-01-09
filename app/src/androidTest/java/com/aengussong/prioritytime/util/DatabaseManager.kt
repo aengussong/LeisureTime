@@ -73,18 +73,17 @@ class DatabaseManager(private val leisureDao: LeisureDao) : KoinComponent {
         return data.sortedWith(compareBy { it.ancestry })
     }
 
-    suspend fun populateDatabaseWithSiblings(
+    suspend fun populateDatabaseWithChildren(
         rootLeisure: LeisureEntity,
-        siblingsCount: Int
+        childrenCount: Int
     ): List<LeisureEntity> {
-        val id = leisureDao.addLeisure(rootLeisure)
-        val ancestry = AncestryBuilder(rootLeisure.ancestry).withChild(id).toString()
-        val siblings = mutableListOf<LeisureEntity>()
-        for (i in 0 until siblingsCount) {
+        val ancestry = AncestryBuilder(rootLeisure.ancestry).withChild(rootLeisure.id).toString()
+        val children = mutableListOf<LeisureEntity>()
+        for (i in 0 until childrenCount) {
             val leisure = genericEntity.copy(ancestry = ancestry)
             val id = leisureDao.addLeisure(leisure)
-            siblings.add(leisure.copy(id = id))
+            children.add(leisure.copy(id = id))
         }
-        return siblings
+        return children
     }
 }

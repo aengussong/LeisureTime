@@ -2,33 +2,28 @@ package com.aengussong.prioritytime.util
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.TimeoutException
+import kotlinx.coroutines.CancellableContinuation
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
+import kotlin.coroutines.resume
 
-/* Copyright 2019 Google LLC.
-   SPDX-License-Identifier: Apache-2.0 */
-fun <T> LiveData<T>.getOrAwaitValue(
-    time: Long = 2,
-    timeUnit: TimeUnit = TimeUnit.SECONDS
-): T {
-    var data: T? = null
-    val latch = CountDownLatch(1)
-    val observer = object : Observer<T> {
-        override fun onChanged(o: T?) {
-            data = o
-            latch.countDown()
-            this@getOrAwaitValue.removeObserver(this)
+suspend fun <T> LiveData<T>.getOrAwaitValue(): T = withContext(Dispatchers.Main.immediate) {
+    val v = value
+    suspendCancellableCoroutine { continuation: CancellableContinuation<T> ->
+        val observer = object : Observer<T> {
+            override fun onChanged(value: T) {
+                if (value != v) {
+                    removeObserver(this)
+                    continuation.resume(value)
+                }
+            }
+        }
+
+        observeForever(observer)
+
+        continuation.invokeOnCancellation {
+            removeObserver(observer)
         }
     }
-
-    this.observeForever(observer)
-
-    // Don't wait indefinitely if the LiveData is not set.
-    if (!latch.await(time, timeUnit)) {
-        throw TimeoutException("LiveData value was never set.")
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    return data as T
 }

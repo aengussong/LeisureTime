@@ -12,4 +12,10 @@ class IncrementLeisureUseCase(private val repo: LeisureRepository) {
 
         repo.incrementLeisures(idsToIncrement)
     }
+
+    suspend fun incrementMinLeisure() {
+        repo.getMinLeisure()?.id?.let {
+            execute(it)
+        }
+    }
 }

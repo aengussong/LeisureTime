@@ -1,9 +1,12 @@
 package com.aengussong.prioritytime.data.local.entity
 
+import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlinx.android.parcel.Parcelize
 import java.util.*
 
+@Parcelize
 @Entity
 data class LeisureEntity(
     @PrimaryKey(autoGenerate = true)
@@ -17,7 +20,7 @@ data class LeisureEntity(
      * entity with id 2
      */
     val ancestry: String
-) {
+) : Parcelable {
     constructor(leisureName: String, leisureCount: Long, leisureAncestry: String) : this(
         name = leisureName,
         counter = leisureCount,

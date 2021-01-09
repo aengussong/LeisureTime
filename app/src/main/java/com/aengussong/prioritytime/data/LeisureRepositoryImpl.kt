@@ -1,28 +1,29 @@
 package com.aengussong.prioritytime.data
 
-import androidx.lifecycle.LiveData
 import com.aengussong.prioritytime.data.local.SharedPrefs
 import com.aengussong.prioritytime.data.local.dao.LeisureDao
 import com.aengussong.prioritytime.data.local.entity.LeisureEntity
 import com.aengussong.prioritytime.model.SortOrder
+import com.aengussong.prioritytime.util.ROOT_ANCESTRY
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.withContext
 import org.koin.core.KoinComponent
-import org.koin.core.inject
 
-class LeisureRepositoryImpl : LeisureRepository, KoinComponent {
-
-    private val localProvider: LeisureDao by inject()
-    private val prefs: SharedPrefs by inject()
+class LeisureRepositoryImpl(
+    private val localProvider: LeisureDao,
+    private val prefs: SharedPrefs
+) : LeisureRepository, KoinComponent {
 
     override suspend fun addLeisure(leisure: LeisureEntity) = onIO {
         localProvider.addLeisure(leisure)
     }
 
     /**
-     * @return lowest counter for the current ancestry or -1 if there are no items with such ancestry.
+     * @return lowest counter for the current ancestry or 0 if there are no items with such ancestry.
      * */
     override suspend fun getLowestCounter(ancestry: String): Long = onIO {
         localProvider.getLowestCounter(ancestry)
@@ -32,7 +33,7 @@ class LeisureRepositoryImpl : LeisureRepository, KoinComponent {
         localProvider.getAncestry(id)
     }
 
-    override fun getHierarchialLeisures(): LiveData<List<LeisureEntity>> {
+    override fun getHierarchialLeisures(): Flow<List<LeisureEntity>> {
         return localProvider.getHierarchialLeisures()
     }
 
@@ -72,7 +73,23 @@ class LeisureRepositoryImpl : LeisureRepository, KoinComponent {
         localProvider.updateCounter(id, counter)
     }
 
-    override fun observeLeisure(id: Long) = localProvider.observeLeisure(id)
+    override fun observeLeisure(id: Long) = localProvider.observeLeisureDistinct(id)
+
+    override fun observeMinLeisure(): Flow<LeisureEntity?> {
+        return getSortOrder().flatMapLatest { order ->
+            when (order) {
+                SortOrder.HIERARCHY -> localProvider.observeMinHierarchial(ROOT_ANCESTRY)
+                SortOrder.LINEAR -> localProvider.observeMinLinear()
+            }.distinctUntilChanged()
+        }
+    }
+
+    override suspend fun getMinLeisure(): LeisureEntity? {
+        return when (prefs.getSortOrder()) {
+            SortOrder.HIERARCHY -> localProvider.getMinHierarchial(ROOT_ANCESTRY)
+            SortOrder.LINEAR -> localProvider.getMinLinear()
+        }
+    }
 
     override fun toggleSort() {
         val orderToSave = if (prefs.getSortOrder() == SortOrder.LINEAR) {

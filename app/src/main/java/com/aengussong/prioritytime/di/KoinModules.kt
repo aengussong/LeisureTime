@@ -23,7 +23,7 @@ val dbModule = module {
 }
 
 val dataModule = module {
-    single<LeisureRepository> { LeisureRepositoryImpl() }
+    single<LeisureRepository> { LeisureRepositoryImpl(get(), get()) }
     single { AddLeisureUseCase(get()) }
     single { GetLeisureUseCase(get()) }
     single { IncrementLeisureUseCase(get()) }

@@ -1,6 +1,5 @@
 package com.aengussong.prioritytime.viewModel
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.aengussong.prioritytime.DbRelatedTest
 import com.aengussong.prioritytime.LeisureDataViewModel
 import com.aengussong.prioritytime.data.local.entity.LeisureEntity
@@ -8,10 +7,8 @@ import com.aengussong.prioritytime.model.Leisure
 import com.aengussong.prioritytime.util.AncestryBuilder
 import com.aengussong.prioritytime.util.Tree
 import com.aengussong.prioritytime.util.getOrAwaitValue
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import org.junit.Assert
-import org.junit.Rule
 import org.junit.Test
 import org.koin.test.get
 import org.koin.test.inject
@@ -19,22 +16,22 @@ import java.util.*
 import kotlin.NoSuchElementException
 
 
+@ExperimentalCoroutinesApi
 class LeisureDataViewModelTest : DbRelatedTest() {
-
-    @get:Rule
-    val instantTaskRule = InstantTaskExecutorRule()
 
     private val viewModel: LeisureDataViewModel by inject()
 
     @Test
     fun startViewModel_dataShouldBeLoaded() = runBlocking {
-        val dbData = databaseManager.populateDatabase()
-        val viewModel: LeisureDataViewModel = get()
+        withContext(Dispatchers.IO) {
+            val dbData = databaseManager.populateDatabase()
+            val viewModel: LeisureDataViewModel = get()
 
-        val result = viewModel.leisureLiveData.getOrAwaitValue()
+            val result = viewModel.leisureLiveData.getOrAwaitValue()
 
-        Assert.assertEquals(1, result.size)
-        Assert.assertEquals(dbData.size, result.first().levels())
+            Assert.assertEquals(1, result.size)
+            Assert.assertEquals(dbData.size, result.first().levels())
+        }
     }
 
     @Test
@@ -94,8 +91,9 @@ class LeisureDataViewModelTest : DbRelatedTest() {
 
     @Test
     fun deleteLeisure_leisureSiblingsShouldNotBeDeleted() = runBlocking {
-        val rootEntity = databaseManager.genericEntity
-        val siblings = databaseManager.populateDatabaseWithSiblings(rootEntity, 3)
+        val rootEntity = databaseManager.genericEntity.copy(id = 1)
+        databaseManager.populateDatabase(rootEntity)
+        val siblings = databaseManager.populateDatabaseWithChildren(rootEntity, 3)
         val entityToDelete = siblings.first()
 
         viewModel.removeEntity(entityToDelete.id).join()

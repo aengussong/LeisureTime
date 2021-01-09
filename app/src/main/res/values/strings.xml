@@ -8,4 +8,5 @@
     <string name="counter_times">Counter: %d</string>
     <string name="last_updated">Last updated: %s</string>
     <string name="menu_sort">Sort items</string>
+    <string name="empty_list">Add items to the list</string>
 </resources>
