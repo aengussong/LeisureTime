@@ -5,12 +5,16 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import com.aengussong.prioritytime.R
+import com.aengussong.prioritytime.data.local.entity.LeisureEntity
 import com.aengussong.prioritytime.util.extention.hide
 import com.aengussong.prioritytime.util.extention.setOnEditorActionListener
 import com.aengussong.prioritytime.util.extention.show
 import kotlinx.android.synthetic.main.activity_node_details.*
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -33,14 +37,12 @@ class NodeDetailsActivity : BaseDataActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_node_details)
 
-        viewModel.observeLeisure(leisureId).observe(this, Observer { leisure ->
-            leisure?.let {
-                node_name.text = it.name
-                node_counter.text = resources.getString(R.string.counter_times, it.counter)
-                node_updated.text =
-                    resources.getString(R.string.last_updated, formatter.format(it.updated))
-            }
-        })
+        viewModel.observeLeisure(leisureId).filterNotNull().onEach { leisure: LeisureEntity ->
+            node_name.text = leisure.name
+            node_counter.text = resources.getString(R.string.counter_times, leisure.counter)
+            node_updated.text =
+                resources.getString(R.string.last_updated, formatter.format(leisure.updated))
+        }.launchIn(lifecycleScope)
 
         delete.setOnClickListener {
             viewModel.removeEntity(leisureId)

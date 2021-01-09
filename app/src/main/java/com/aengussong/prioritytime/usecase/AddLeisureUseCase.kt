@@ -17,7 +17,7 @@ class AddLeisureUseCase(private val repo: LeisureRepository) {
         val parentAncestry = repo.getAncestry(parentId)
         val ancestry = AncestryBuilder(parentAncestry).withChild(parentId).toString()
         val counter = repo.getLowestCounter(ancestry).let {
-            if (it == -1L) {
+            if (it == 0L) {
                 return@let repo.getLeisureCounter(parentId)
             }
             it

@@ -1,7 +1,5 @@
 package com.aengussong.prioritytime.usecase
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
 import com.aengussong.prioritytime.data.LeisureRepository
 import com.aengussong.prioritytime.data.local.entity.LeisureEntity
 import com.aengussong.prioritytime.model.Leisure
@@ -28,11 +26,8 @@ class GetLeisureUseCase(private val repo: LeisureRepository) : Mapper() {
     }
 
 
-    fun getHierarchialLeisures(): LiveData<List<Tree<Leisure>>> {
-        return Transformations.map(repo.getHierarchialLeisures()) { list: List<LeisureEntity> ->
-            list.toLeisureHierarchy()
-        }
-    }
+    fun getHierarchialLeisures(): Flow<List<Tree<Leisure>>> =
+        repo.getHierarchialLeisures().map { it.toLeisureHierarchy() }
 
     fun getLinearLeisures(): Flow<List<Tree<Leisure>>> {
         return repo.getLinearLeisures().map { list ->
@@ -41,7 +36,11 @@ class GetLeisureUseCase(private val repo: LeisureRepository) : Mapper() {
         }
     }
 
-    fun getLeisure(id: Long) = repo.observeLeisure(id)
+    fun getLeisure(id: Long): Flow<LeisureEntity?> = repo.observeLeisure(id)
+
+    fun observeMinLeisure(): Flow<LeisureEntity?> = repo.observeMinLeisure()
+
+    suspend fun getMinLeisure(): LeisureEntity? = repo.getMinLeisure()
 
     /**
      * Current db implementation returns entities ordered by ancestry, so all root elements are

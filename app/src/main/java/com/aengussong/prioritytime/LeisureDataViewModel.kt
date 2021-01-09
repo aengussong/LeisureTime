@@ -1,14 +1,17 @@
 package com.aengussong.prioritytime
 
 import androidx.lifecycle.*
+import com.aengussong.prioritytime.data.local.entity.LeisureEntity
 import com.aengussong.prioritytime.model.Leisure
-import com.aengussong.prioritytime.usecase.*
 import com.aengussong.prioritytime.model.SortOrder
+import com.aengussong.prioritytime.usecase.*
 import com.aengussong.prioritytime.util.Tree
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 
 class LeisureDataViewModel(
@@ -28,30 +31,15 @@ class LeisureDataViewModel(
         get() = _errorLiveData
 
     private val _errorLiveData = MutableLiveData<Throwable>()
-    private val _leisureLiveData = MediatorLiveData<List<Tree<Leisure>>>()
+    private val _leisureLiveData = sortOrderUseCase.getSortOrder().flatMapLatest { order ->
+        when (order) {
+            SortOrder.HIERARCHY -> getLeisureUseCase.getHierarchialLeisures()
+            SortOrder.LINEAR -> getLeisureUseCase.getLinearLeisures()
+        }.distinctUntilChanged()
+    }.asLiveData()
 
     private val errorHandler = CoroutineExceptionHandler { _, throwable ->
         _errorLiveData.value = throwable
-    }
-
-    init {
-        val hierarchy = getLeisureUseCase.getHierarchialLeisures()
-        val linear = getLeisureUseCase.getLinearLeisures().asLiveData()
-
-        viewModelScope.launch {
-            sortOrderUseCase.getSortOrder().collect { sortOrder ->
-                when (sortOrder) {
-                    SortOrder.HIERARCHY -> {
-                        _leisureLiveData.removeSource(linear)
-                        _leisureLiveData.addSource(hierarchy) { _leisureLiveData.value = it }
-                    }
-                    SortOrder.LINEAR -> {
-                        _leisureLiveData.removeSource(hierarchy)
-                        _leisureLiveData.addSource(linear) { _leisureLiveData.value = it }
-                    }
-                }
-            }
-        }
     }
 
     fun addLeisure(name: String, parentId: Long? = null): Job {
@@ -82,7 +70,7 @@ class LeisureDataViewModel(
         dropCountersUseCase.execute()
     }
 
-    fun observeLeisure(id: Long) = getLeisureUseCase.getLeisure(id)
+    fun observeLeisure(id: Long): Flow<LeisureEntity?> = getLeisureUseCase.getLeisure(id)
 
     fun toggleSort() {
         sortOrderUseCase.toggleSortOrder()

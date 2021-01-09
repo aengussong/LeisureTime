@@ -1,11 +1,11 @@
 package com.aengussong.prioritytime.data.local.dao
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import com.aengussong.prioritytime.data.local.entity.LeisureEntity
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import java.util.*
 
 @Dao
@@ -15,7 +15,7 @@ interface LeisureDao {
     suspend fun addLeisure(leisure: LeisureEntity): Long
 
     @Query("SELECT * FROM leisureentity ORDER BY ancestry")
-    fun getHierarchialLeisures(): LiveData<List<LeisureEntity>>
+    fun getHierarchialLeisures(): Flow<List<LeisureEntity>>
 
     @Query("SELECT * FROM leisureentity ORDER BY counter")
     fun getLinearLeisures(): Flow<List<LeisureEntity>>
@@ -23,9 +23,9 @@ interface LeisureDao {
     /**
      * Select lowest counter for level, e.g. if item added as child for second level element, we
      * should find lowest counter in third level for this parent element, without elements
-     * examination on other levels. If there is no items, returns -1.
+     * examination on other levels. If there is no items, returns 0.
      * */
-    @Query("SELECT COALESCE(MIN(counter),-1) FROM leisureentity WHERE ancestry = :ancestry")
+    @Query("SELECT COALESCE(MIN(counter),0) FROM leisureentity WHERE ancestry = :ancestry")
     suspend fun getLowestCounter(ancestry: String): Long
 
     @Query("SELECT ancestry FROM leisureentity WHERE id = :id")
@@ -56,5 +56,19 @@ interface LeisureDao {
     suspend fun updateCounter(id: Long, counter: Long)
 
     @Query("SELECT * FROM leisureentity WHERE id = :id")
-    fun observeLeisure(id: Long): LiveData<LeisureEntity>
+    fun observeLeisure(id: Long): Flow<LeisureEntity?>
+
+    @Query("SELECT * FROM leisureentity WHERE ancestry = :ancestry ORDER BY counter LIMIT 1")
+    suspend fun getMinHierarchial(ancestry: String): LeisureEntity?
+
+    @Query("SELECT * FROM leisureentity WHERE ancestry = :ancestry ORDER BY counter LIMIT 1")
+    fun observeMinHierarchial(ancestry: String): Flow<LeisureEntity?>
+
+    @Query("SELECT * FROM leisureentity ORDER BY counter LIMIT 1")
+    suspend fun getMinLinear(): LeisureEntity?
+
+    @Query("SELECT * FROM leisureentity ORDER BY counter LIMIT 1")
+    fun observeMinLinear(): Flow<LeisureEntity?>
+
+    fun observeLeisureDistinct(id: Long) = observeLeisure(id).distinctUntilChanged()
 }
