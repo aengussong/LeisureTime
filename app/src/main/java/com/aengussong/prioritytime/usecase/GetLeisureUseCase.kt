@@ -13,19 +13,6 @@ import kotlin.Comparator
 
 class GetLeisureUseCase(private val repo: LeisureRepository) : Mapper() {
 
-    /**
-     * Descending comparator by counter and updated fields. Counter considered to be the most
-     * important comparable value, two items compared by date only if they have same counter.
-     * */
-    private val comparator = Comparator<Tree<Leisure>> { tree1, tree2 ->
-        val counterDiff = tree1.value.counter - tree2.value.counter
-        val equality = if (counterDiff == 0L) {
-            tree1.value.updated.time - tree2.value.updated.time
-        } else counterDiff
-        equality.toInt()
-    }
-
-
     fun getHierarchialLeisures(): Flow<List<Tree<Leisure>>> =
         repo.getHierarchialLeisures().map { it.toLeisureHierarchy() }
 
@@ -33,6 +20,7 @@ class GetLeisureUseCase(private val repo: LeisureRepository) : Mapper() {
         return repo.getLinearLeisures().map { list ->
             list.map { Leisure(it.id, it.name, it.counter, it.updated) }
                 .map { Tree(it) }
+                .sortedWith(treeComparator)
         }
     }
 
@@ -63,7 +51,7 @@ class GetLeisureUseCase(private val repo: LeisureRepository) : Mapper() {
             }
         }
 
-        return trees.values.toList().sort(comparator)
+        return trees.values.toList().sort(treeComparator)
     }
 
     private fun Tree<Leisure>.addToSubtree(ancestry: Stack<Long>, leisure: Leisure) {
@@ -80,5 +68,18 @@ class GetLeisureUseCase(private val repo: LeisureRepository) : Mapper() {
     private fun List<Tree<Leisure>>.sort(comparator: Comparator<Tree<Leisure>>): List<Tree<Leisure>> {
         forEach { tree -> tree.sortChildren(comparator) }
         return sortedWith(comparator)
+    }
+
+    /**
+     * Descending comparator by `counter` and `updated` fields. Counter considered to be the most
+     * important comparable value, two items compared by date only if they have the same counter.
+     * */
+    private val treeComparator = Comparator<Tree<Leisure>> { tree1, tree2 ->
+        val counterDiff = tree1.value.counter - tree2.value.counter
+        return@Comparator if (counterDiff == 0L) {
+            tree1.value.updated.time - tree2.value.updated.time
+        } else {
+            counterDiff
+        }.toInt()
     }
 }

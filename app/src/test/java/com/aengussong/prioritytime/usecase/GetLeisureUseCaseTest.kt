@@ -25,7 +25,7 @@ class GetLeisureUseCaseTest {
     private val getLeisureUseCase = GetLeisureUseCase(repo)
 
     @Test
-    fun `get data with three levels - should be converted to tree hierarchy`() = runBlocking {
+    fun `get hierarchial data with three levels - should be converted to tree hierarchy`() = runBlocking {
         val ancestryBuilder = AncestryBuilder()
 
         val firstLevelAncestry = ancestryBuilder.toString()
@@ -73,7 +73,7 @@ class GetLeisureUseCaseTest {
     }
 
     @Test
-    fun `get data with several root leisures - should return several unconnected trees`() =
+    fun `get hierarchial data with several root leisures - should return several unconnected trees`() =
         runBlocking {
             val rootAncestry = AncestryBuilder()
 
@@ -102,7 +102,7 @@ class GetLeisureUseCaseTest {
         }
 
     @Test
-    fun `get data - root trees should be ordered by counter and updated date`() = runBlocking {
+    fun `get hierarchial data - root trees should be ordered by counter and updated date`() = runBlocking {
         val lp = LeisureProvider()
         val recentlyUpdated = lp.getRecentlyUpdatedEntity(true)
         val largestCounter = lp.getLargestCounterEntity()
@@ -119,7 +119,7 @@ class GetLeisureUseCaseTest {
     }
 
     @Test
-    fun `get trees - subtrees should be ordered by counter and updated date`() = runBlocking {
+    fun `get hierarchial trees - subtrees should be ordered by counter and updated date`() = runBlocking {
         val lp = LeisureProvider()
 
         val parentId = 1L
@@ -141,5 +141,27 @@ class GetLeisureUseCaseTest {
         assertEquals(lp.id_longAgoUpdated, resultChildren[0].value.id)
         assertEquals(lp.id_recentlyUpdated, resultChildren[1].value.id)
         assertEquals(lp.id_largestCounter, resultChildren[2].value.id)
+    }
+
+    @Test
+    fun `get linearly sorted tasks - tasks should be ordered by counter and updated date`() = runBlocking {
+        val lp = LeisureProvider()
+        val parentId = 1L
+        val childAncestry = AncestryBuilder().withChild(parentId).toString()
+        val parentEntitySmallestCounter = LeisureEntity(parentId, "parent", 0, Date(), lp.rootAncestry)
+        val largestChild = lp.getLargestCounterEntity(childAncestry)
+        val equalRecentChild = lp.getRecentlyUpdatedEntity(true, childAncestry)
+        val equalLongAgoChild = lp.getLongAgoUpdatedEntity(true, childAncestry)
+        val entities = listOf(parentEntitySmallestCounter, equalRecentChild, largestChild, equalLongAgoChild)
+        every { repo.getLinearLeisures() } returns flowOf(entities)
+
+        val resultTree = getLeisureUseCase.getLinearLeisures().first()
+
+        assertEquals(4, resultTree.size)
+        //assert order
+        assertEquals(parentEntitySmallestCounter.id, resultTree[0].value.id)
+        assertEquals(lp.id_longAgoUpdated, resultTree[1].value.id)
+        assertEquals(lp.id_recentlyUpdated, resultTree[2].value.id)
+        assertEquals(lp.id_largestCounter, resultTree[3].value.id)
     }
 }
