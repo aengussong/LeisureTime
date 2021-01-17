@@ -13,6 +13,5 @@ class RemoveLeisureUseCase(private val repo: LeisureRepository) {
         repo.removeLeisures(childrenAncestry)
 
         //remove leisure
-        repo.removeLeisure(id)
     }
 }
