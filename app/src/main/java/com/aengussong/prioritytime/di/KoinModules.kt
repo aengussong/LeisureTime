@@ -1,11 +1,12 @@
 package com.aengussong.prioritytime.di
 
 import androidx.room.Room
-import com.aengussong.prioritytime.LeisureDataViewModel
-import com.aengussong.prioritytime.data.LeisureRepository
-import com.aengussong.prioritytime.data.LeisureRepositoryImpl
-import com.aengussong.prioritytime.data.local.LeisureDb
+import com.aengussong.prioritytime.TaskDataViewModel
+import com.aengussong.prioritytime.data.TaskRepository
+import com.aengussong.prioritytime.data.TaskRepositoryImpl
+import com.aengussong.prioritytime.data.local.MIGRATION_1_2
 import com.aengussong.prioritytime.data.local.SharedPrefs
+import com.aengussong.prioritytime.data.local.TasksDb
 import com.aengussong.prioritytime.usecase.*
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -15,20 +16,20 @@ val dbModule = module {
     single {
         Room.databaseBuilder(
             androidApplication(),
-            LeisureDb::class.java,
+            TasksDb::class.java,
             "leisure_db"
-        ).build()
+        ).addMigrations(MIGRATION_1_2).build()
     }
-    single { get<LeisureDb>().leisureDao() }
+    single { get<TasksDb>().taskDao() }
 }
 
 val dataModule = module {
-    single<LeisureRepository> { LeisureRepositoryImpl(get(), get()) }
-    single { AddLeisureUseCase(get()) }
-    single { GetLeisureUseCase(get()) }
-    single { IncrementLeisureUseCase(get()) }
-    single { RenameLeisureUseCase(get()) }
-    single { RemoveLeisureUseCase(get()) }
+    single<TaskRepository> { TaskRepositoryImpl(get(), get()) }
+    single { AddTaskUseCase(get()) }
+    single { GetTaskUseCase(get()) }
+    single { IncrementTaskUseCase(get()) }
+    single { RenameTaskUseCase(get()) }
+    single { RemoveTaskUseCase(get()) }
     single { DropCountersUseCase(get()) }
     single { DecrementUseCase(get()) }
     single { SortOrderUseCase(get()) }
@@ -36,5 +37,5 @@ val dataModule = module {
 }
 
 val viewModelModule = module {
-    viewModel { LeisureDataViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
+    viewModel { TaskDataViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
 }

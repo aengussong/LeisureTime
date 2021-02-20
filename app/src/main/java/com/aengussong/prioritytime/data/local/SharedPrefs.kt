@@ -5,7 +5,7 @@ import com.aengussong.prioritytime.model.SortOrder
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.asFlow
 
-private const val LEISURE_PREFS = "leisure_prefs"
+private const val TASK_PREFS = "leisure_prefs"
 
 private const val KEY_SORT = "sort_id"
 
@@ -13,7 +13,7 @@ private val DEFAULT_SORT = SortOrder.HIERARCHY.id
 
 class SharedPrefs(context: Context) {
 
-    private val prefs = context.getSharedPreferences(LEISURE_PREFS, Context.MODE_PRIVATE)
+    private val prefs = context.getSharedPreferences(TASK_PREFS, Context.MODE_PRIVATE)
 
     private val channel = ConflatedBroadcastChannel(getSortOrder())
 

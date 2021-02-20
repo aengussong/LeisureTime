@@ -1,10 +1,10 @@
 <resources>
     <string name="app_name">Priority Time</string>
     <string name="add_btn">Add</string>
-    <string name="add_leisure">Add Item</string>
-    <string name="add_leisure_cd">Add item</string>
-    <string name="delete_leisure">Delete Item</string>
-    <string name="decrement_leisure">Decrement Counter</string>
+    <string name="add_task">Add Item</string>
+    <string name="add_task_cd">Add item</string>
+    <string name="delete_task">Delete Item</string>
+    <string name="decrement_task">Decrement Counter</string>
     <string name="counter_times">Counter: %d</string>
     <string name="last_updated">Last updated: %s</string>
     <string name="menu_sort">Sort items</string>

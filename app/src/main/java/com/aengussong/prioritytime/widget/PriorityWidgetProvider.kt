@@ -8,7 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
 import com.aengussong.prioritytime.R
-import com.aengussong.prioritytime.usecase.GetLeisureUseCase
+import com.aengussong.prioritytime.usecase.GetTaskUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -27,7 +27,7 @@ class PriorityWidgetProvider : AppWidgetProvider(), KoinComponent {
             }
     }
 
-    private val getLeisureUseCase: GetLeisureUseCase by inject()
+    private val getTaskUseCase: GetTaskUseCase by inject()
 
     override fun onReceive(context: Context, intent: Intent?) {
         if (intent?.action == ACTION_WIDGET_UPDATE) {
@@ -47,13 +47,13 @@ class PriorityWidgetProvider : AppWidgetProvider(), KoinComponent {
         appWidgetIds: IntArray?
     ) {
         CoroutineScope(Dispatchers.IO).launch {
-            val minLeisure = getLeisureUseCase.getMinLeisure()
+            val minTask = getTaskUseCase.getMinTask()
             withContext(Dispatchers.Main) {
                 appWidgetIds?.forEach { widgetId ->
                     val views = RemoteViews(context.packageName, R.layout.layout_widget).apply {
                         setTextViewText(
                             R.id.widget_task_name,
-                            minLeisure?.name ?: context.getString(R.string.empty_list)
+                            minTask?.name ?: context.getString(R.string.empty_list)
                         )
                         val pIntent = PendingIntent.getBroadcast(
                             context,

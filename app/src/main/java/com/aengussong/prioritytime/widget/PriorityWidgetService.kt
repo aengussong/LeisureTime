@@ -3,7 +3,7 @@ package com.aengussong.prioritytime.widget
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.JobIntentService
-import com.aengussong.prioritytime.usecase.IncrementLeisureUseCase
+import com.aengussong.prioritytime.usecase.IncrementTaskUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -19,12 +19,12 @@ class PriorityWidgetService : JobIntentService() {
         }
     }
 
-    private val incrementLeisureEntity: IncrementLeisureUseCase by inject()
+    private val incrementTaskEntity: IncrementTaskUseCase by inject()
 
     override fun onHandleWork(intent: Intent) {
         //Job intent service is already on the background service, so should use run blocking
         runBlocking {
-            incrementLeisureEntity.incrementMinLeisure()
+            incrementTaskEntity.incrementMinTask()
             withContext(Dispatchers.Main) {
                 sendBroadcast(PriorityWidgetProvider.getUpdateWidgetIntent(this@PriorityWidgetService))
             }

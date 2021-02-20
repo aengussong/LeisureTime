@@ -1,8 +1,8 @@
 package com.aengussong.prioritytime
 
 import androidx.lifecycle.*
-import com.aengussong.prioritytime.data.local.entity.LeisureEntity
-import com.aengussong.prioritytime.model.Leisure
+import com.aengussong.prioritytime.data.local.entity.TaskEntity
+import com.aengussong.prioritytime.model.Task
 import com.aengussong.prioritytime.model.SortOrder
 import com.aengussong.prioritytime.usecase.*
 import com.aengussong.prioritytime.util.Tree
@@ -14,27 +14,27 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 
-class LeisureDataViewModel(
-    private val addLeisureUseCase: AddLeisureUseCase,
-    private val getLeisureUseCase: GetLeisureUseCase,
-    private val incrementLeisureUseCase: IncrementLeisureUseCase,
-    private val renameLeisureUseCase: RenameLeisureUseCase,
-    private val removeLeisureUseCase: RemoveLeisureUseCase,
+class TaskDataViewModel(
+    private val addTaskUseCase: AddTaskUseCase,
+    private val getTaskUseCase: GetTaskUseCase,
+    private val incrementTaskUseCase: IncrementTaskUseCase,
+    private val renameTaskUseCase: RenameTaskUseCase,
+    private val removeTaskUseCase: RemoveTaskUseCase,
     private val dropCountersUseCase: DropCountersUseCase,
     private val decrementUseCase: DecrementUseCase,
     private val sortOrderUseCase: SortOrderUseCase
 ) : ViewModel() {
 
-    val leisureLiveData: LiveData<List<Tree<Leisure>>>
-        get() = _leisureLiveData
+    val taskLiveData: LiveData<List<Tree<Task>>>
+        get() = _taskLiveData
     val errorLiveData: LiveData<Throwable>
         get() = _errorLiveData
 
     private val _errorLiveData = MutableLiveData<Throwable>()
-    private val _leisureLiveData = sortOrderUseCase.getSortOrder().flatMapLatest { order ->
+    private val _taskLiveData = sortOrderUseCase.getSortOrder().flatMapLatest { order ->
         when (order) {
-            SortOrder.HIERARCHY -> getLeisureUseCase.getHierarchialLeisures()
-            SortOrder.LINEAR -> getLeisureUseCase.getLinearLeisures()
+            SortOrder.HIERARCHY -> getTaskUseCase.getHierarchialTasks()
+            SortOrder.LINEAR -> getTaskUseCase.getLinearTasks()
         }.distinctUntilChanged()
     }.asLiveData()
 
@@ -42,27 +42,27 @@ class LeisureDataViewModel(
         _errorLiveData.value = throwable
     }
 
-    fun addLeisure(name: String, parentId: Long? = null): Job {
+    fun addTask(name: String, parentId: Long? = null): Job {
         return launchWithHandler {
-            addLeisureUseCase.execute(name, parentId)
+            addTaskUseCase.execute(name, parentId)
         }
     }
 
-    fun incrementCounter(leisureId: Long): Job {
+    fun incrementCounter(taskId: Long): Job {
         return launchWithHandler {
-            incrementLeisureUseCase.execute(leisureId)
+            incrementTaskUseCase.execute(taskId)
         }
     }
 
-    fun renameLeisure(leisureId: Long, newName: String): Job {
+    fun renameTask(taskId: Long, newName: String): Job {
         return launchWithHandler {
-            renameLeisureUseCase.execute(leisureId, newName)
+            renameTaskUseCase.execute(taskId, newName)
         }
     }
 
-    fun removeEntity(leisureId: Long): Job {
+    fun removeEntity(taskId: Long): Job {
         return launchWithHandler {
-            removeLeisureUseCase.execute(leisureId)
+            removeTaskUseCase.execute(taskId)
         }
     }
 
@@ -70,7 +70,7 @@ class LeisureDataViewModel(
         dropCountersUseCase.execute()
     }
 
-    fun observeLeisure(id: Long): Flow<LeisureEntity?> = getLeisureUseCase.getLeisure(id)
+    fun observeTask(id: Long): Flow<TaskEntity?> = getTaskUseCase.getTask(id)
 
     fun toggleSort() {
         sortOrderUseCase.toggleSortOrder()
@@ -79,7 +79,7 @@ class LeisureDataViewModel(
     private fun launchWithHandler(block: suspend CoroutineScope.() -> Unit) =
         viewModelScope.launch(errorHandler, block = block)
 
-    fun decrementLeisure(leisureId: Long) = launchWithHandler {
-        decrementUseCase.execute(leisureId)
+    fun decrementTask(taskId: Long) = launchWithHandler {
+        decrementUseCase.execute(taskId)
     }
 }

@@ -11,14 +11,14 @@
         style="@style/Button.Info"
         android:layout_width="match_parent"
         android:layout_above="@id/delete"
-        android:text="@string/decrement_leisure" />
+        android:text="@string/decrement_task" />
 
     <Button
         android:id="@+id/delete"
         style="@style/Button.Attention"
         android:layout_width="match_parent"
         android:layout_alignParentBottom="true"
-        android:text="@string/delete_leisure" />
+        android:text="@string/delete_task" />
 
     <TextView
         android:id="@+id/node_name"
