@@ -58,16 +58,16 @@ interface TasksDao {
     @Query("SELECT * FROM tasks WHERE id = :id")
     fun observeTask(id: Long): Flow<TaskEntity?>
 
-    @Query("SELECT * FROM tasks WHERE ancestry = :ancestry ORDER BY counter LIMIT 1")
+    @Query("SELECT * FROM tasks WHERE ancestry = :ancestry ORDER BY counter, updated LIMIT 1")
     suspend fun getMinHierarchial(ancestry: String): TaskEntity?
 
-    @Query("SELECT * FROM tasks WHERE ancestry = :ancestry ORDER BY counter LIMIT 1")
+    @Query("SELECT * FROM tasks WHERE ancestry = :ancestry ORDER BY counter, updated LIMIT 1")
     fun observeMinHierarchial(ancestry: String): Flow<TaskEntity?>
 
-    @Query("SELECT * FROM tasks ORDER BY counter LIMIT 1")
+    @Query("SELECT * FROM tasks ORDER BY counter, updated LIMIT 1")
     suspend fun getMinLinear(): TaskEntity?
 
-    @Query("SELECT * FROM tasks ORDER BY counter LIMIT 1")
+    @Query("SELECT * FROM tasks ORDER BY counter, updated LIMIT 1")
     fun observeMinLinear(): Flow<TaskEntity?>
 
     fun observeTaskDistinct(id: Long) = observeTask(id).distinctUntilChanged()
