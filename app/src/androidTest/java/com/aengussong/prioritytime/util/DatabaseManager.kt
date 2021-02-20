@@ -1,10 +1,10 @@
 package com.aengussong.prioritytime.util
 
-import com.aengussong.prioritytime.data.local.dao.LeisureDao
-import com.aengussong.prioritytime.data.local.entity.LeisureEntity
+import com.aengussong.prioritytime.data.local.dao.TasksDao
+import com.aengussong.prioritytime.data.local.entity.TaskEntity
 import org.koin.core.KoinComponent
 
-class DatabaseManager(private val leisureDao: LeisureDao) : KoinComponent {
+class DatabaseManager(private val tasksDao: TasksDao) : KoinComponent {
 
     private val rootAncestry = AncestryBuilder()
     private val firstLevelAncestry = rootAncestry.toString()
@@ -17,7 +17,7 @@ class DatabaseManager(private val leisureDao: LeisureDao) : KoinComponent {
     private val lowestCounter = 2L
 
     /*---------------GENERIC----------------------*/
-    val genericEntity = LeisureEntity(
+    val genericEntity = TaskEntity(
         id = 0L,
         name = "generic",
         counter = 0L,
@@ -26,7 +26,7 @@ class DatabaseManager(private val leisureDao: LeisureDao) : KoinComponent {
 
     /*---------------FIRST LEVEL------------------*/
     val lowestFirstLevel =
-        LeisureEntity(
+        TaskEntity(
             id = firstLevelId,
             name = "firstLvl",
             counter = lowestCounter,
@@ -35,7 +35,7 @@ class DatabaseManager(private val leisureDao: LeisureDao) : KoinComponent {
 
     /*---------------SECOND LEVEL------------------*/
     val lowestSecondLevel =
-        LeisureEntity(
+        TaskEntity(
             id = secondLevelId,
             name = "secondLvl",
             counter = lowestCounter,
@@ -44,7 +44,7 @@ class DatabaseManager(private val leisureDao: LeisureDao) : KoinComponent {
 
     /*---------------THIRD LEVEL------------------*/
     val lowestThirdLevel =
-        LeisureEntity(
+        TaskEntity(
             id = thirdLevelId,
             name = "thirdLvl",
             counter = lowestCounter,
@@ -57,32 +57,32 @@ class DatabaseManager(private val leisureDao: LeisureDao) : KoinComponent {
         lowestThirdLevel
     )
 
-    suspend fun populateDatabase(): List<LeisureEntity> {
+    suspend fun populateDatabase(): List<TaskEntity> {
         return data.apply {
             this.forEach {
-                leisureDao.addLeisure(it)
+                tasksDao.addTask(it)
             }
         }
     }
 
-    suspend fun populateDatabase(vararg leisure: LeisureEntity) {
-        leisure.forEach { leisureDao.addLeisure(it) }
+    suspend fun populateDatabase(vararg task: TaskEntity) {
+        task.forEach { tasksDao.addTask(it) }
     }
 
-    fun getOrderedByAncestry(): List<LeisureEntity> {
+    fun getOrderedByAncestry(): List<TaskEntity> {
         return data.sortedWith(compareBy { it.ancestry })
     }
 
     suspend fun populateDatabaseWithChildren(
-        rootLeisure: LeisureEntity,
+        rootTask: TaskEntity,
         childrenCount: Int
-    ): List<LeisureEntity> {
-        val ancestry = AncestryBuilder(rootLeisure.ancestry).withChild(rootLeisure.id).toString()
-        val children = mutableListOf<LeisureEntity>()
+    ): List<TaskEntity> {
+        val ancestry = AncestryBuilder(rootTask.ancestry).withChild(rootTask.id).toString()
+        val children = mutableListOf<TaskEntity>()
         for (i in 0 until childrenCount) {
-            val leisure = genericEntity.copy(ancestry = ancestry)
-            val id = leisureDao.addLeisure(leisure)
-            children.add(leisure.copy(id = id))
+            val task = genericEntity.copy(ancestry = ancestry)
+            val id = tasksDao.addTask(task)
+            children.add(task.copy(id = id))
         }
         return children
     }

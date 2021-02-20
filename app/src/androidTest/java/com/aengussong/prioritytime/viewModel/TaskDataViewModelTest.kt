@@ -1,9 +1,9 @@
 package com.aengussong.prioritytime.viewModel
 
 import com.aengussong.prioritytime.DbRelatedTest
-import com.aengussong.prioritytime.LeisureDataViewModel
-import com.aengussong.prioritytime.data.local.entity.LeisureEntity
-import com.aengussong.prioritytime.model.Leisure
+import com.aengussong.prioritytime.TaskDataViewModel
+import com.aengussong.prioritytime.data.local.entity.TaskEntity
+import com.aengussong.prioritytime.model.Task
 import com.aengussong.prioritytime.util.AncestryBuilder
 import com.aengussong.prioritytime.util.Tree
 import com.aengussong.prioritytime.util.getOrAwaitValue
@@ -17,17 +17,17 @@ import kotlin.NoSuchElementException
 
 
 @ExperimentalCoroutinesApi
-class LeisureDataViewModelTest : DbRelatedTest() {
+class TaskDataViewModelTest : DbRelatedTest() {
 
-    private val viewModel: LeisureDataViewModel by inject()
+    private val viewModel: TaskDataViewModel by inject()
 
     @Test
     fun startViewModel_dataShouldBeLoaded() = runBlocking {
         withContext(Dispatchers.IO) {
             val dbData = databaseManager.populateDatabase()
-            val viewModel: LeisureDataViewModel = get()
+            val viewModel: TaskDataViewModel = get()
 
-            val result = viewModel.leisureLiveData.getOrAwaitValue()
+            val result = viewModel.taskLiveData.getOrAwaitValue()
 
             Assert.assertEquals(1, result.size)
             Assert.assertEquals(dbData.size, result.first().levels())
@@ -36,61 +36,61 @@ class LeisureDataViewModelTest : DbRelatedTest() {
 
     @Test
     fun addItem_itemShouldBeAdded() = runBlocking {
-        val leisureName = "addItemTest"
+        val taskName = "addItemTest"
 
-        viewModel.addLeisure(leisureName).join()
+        viewModel.addTask(taskName).join()
 
-        val result = viewModel.leisureLiveData.getOrAwaitValue()
-        Assert.assertEquals(leisureName, result.first().value.name)
+        val result = viewModel.taskLiveData.getOrAwaitValue()
+        Assert.assertEquals(taskName, result.first().value.name)
     }
 
     @Test
     fun incrementCounter_counterShouldBeIncreased() = runBlocking {
         val dbData = databaseManager.populateDatabase()
-        val testLeisure = dbData.last()
-        val parentRootId = AncestryBuilder(testLeisure.ancestry).getRootParent()
+        val testTask = dbData.last()
+        val parentRootId = AncestryBuilder(testTask.ancestry).getRootParent()
 
-        viewModel.incrementCounter(testLeisure.id).join()
+        viewModel.incrementCounter(testTask.id).join()
 
         delay(500)
-        val result = viewModel.leisureLiveData.getOrAwaitValue()
+        val result = viewModel.taskLiveData.getOrAwaitValue()
 
-        val resultLeisure = result.findLeisure(parentRootId!!, testLeisure.id)
-        Assert.assertEquals(testLeisure.counter + 1, resultLeisure?.counter)
+        val resultTask = result.findTask(parentRootId!!, testTask.id)
+        Assert.assertEquals(testTask.counter + 1, resultTask?.counter)
     }
 
     @Test
-    fun renameLeisure_leisureShouldBeRenamed() = runBlocking {
+    fun renameTask_taskShouldBeRenamed() = runBlocking {
         val oldName = "oldName"
         val newName = "newName"
-        viewModel.addLeisure(oldName).join()
-        val leisureId = viewModel.leisureLiveData.getOrAwaitValue().first().value.id
+        viewModel.addTask(oldName).join()
+        val taskId = viewModel.taskLiveData.getOrAwaitValue().first().value.id
 
-        viewModel.renameLeisure(leisureId, newName).join()
+        viewModel.renameTask(taskId, newName).join()
 
-        val updatedLeisureName = viewModel.leisureLiveData.getOrAwaitValue().first().value.name
-        Assert.assertEquals(newName, updatedLeisureName)
+        val updatedTaskName = viewModel.taskLiveData.getOrAwaitValue().first().value.name
+        Assert.assertEquals(newName, updatedTaskName)
     }
 
 
     @Test
-    fun deleteLeisure_wholeBranchShouldBeDeleted() = runBlocking {
+    fun deleteTask_wholeBranchShouldBeDeleted() = runBlocking {
         val dbData = databaseManager.populateDatabase()
         val middleLevelEntity = databaseManager.lowestSecondLevel
         val topLevelEntity = databaseManager.lowestFirstLevel
-        val preDeleteTree = viewModel.leisureLiveData.getOrAwaitValue().first()
+        val preDeleteTree = viewModel.taskLiveData.getOrAwaitValue().first()
         Assert.assertEquals(dbData.size, preDeleteTree.levels())
 
         viewModel.removeEntity(middleLevelEntity.id).join()
 
-        val tree = viewModel.leisureLiveData.getOrAwaitValue().first()
+        val tree = viewModel.taskLiveData.getOrAwaitValue().first()
         Assert.assertEquals(1, tree.levels())
         Assert.assertEquals(topLevelEntity.id, tree.value.id)
         Assert.assertEquals(0, tree.children().size)
     }
 
     @Test
-    fun deleteLeisure_leisureSiblingsShouldNotBeDeleted() = runBlocking {
+    fun deleteTask_taskSiblingsShouldNotBeDeleted() = runBlocking {
         val rootEntity = databaseManager.genericEntity.copy(id = 1)
         databaseManager.populateDatabase(rootEntity)
         val siblings = databaseManager.populateDatabaseWithChildren(rootEntity, 3)
@@ -98,7 +98,7 @@ class LeisureDataViewModelTest : DbRelatedTest() {
 
         viewModel.removeEntity(entityToDelete.id).join()
 
-        val tree = viewModel.leisureLiveData.getOrAwaitValue()
+        val tree = viewModel.taskLiveData.getOrAwaitValue()
         val rootAncestryStack = AncestryBuilder(entityToDelete.ancestry).getAncestryStack()
         val siblingsAfterDelete = tree.findChildren(rootAncestryStack)
         Assert.assertEquals(siblings.size - 1, siblingsAfterDelete.size)
@@ -107,36 +107,36 @@ class LeisureDataViewModelTest : DbRelatedTest() {
     @Test
     fun dropCounters_allCountersShouldBeDrooped() = runBlocking {
         databaseManager.populateDatabase()
-        viewModel.leisureLiveData.getOrAwaitValue().assertCounters(shouldBeZero = false)
+        viewModel.taskLiveData.getOrAwaitValue().assertCounters(shouldBeZero = false)
 
         viewModel.dropCounters().join()
 
-        viewModel.leisureLiveData.getOrAwaitValue().assertCounters(shouldBeZero = true)
+        viewModel.taskLiveData.getOrAwaitValue().assertCounters(shouldBeZero = true)
     }
 
     @Test
     fun decrementCounter_counterShouldBeDecremented() = runBlocking {
         val counter = 5L
-        val testEntity = genericLeisure().copy(counter = counter)
+        val testEntity = genericTask().copy(counter = counter)
         databaseManager.populateDatabase(testEntity)
 
-        viewModel.decrementLeisure(testEntity.id).join()
+        viewModel.decrementTask(testEntity.id).join()
 
-        val result = viewModel.leisureLiveData.getOrAwaitValue()
-        val resultLeisure = result.findLeisure(testEntity.id)
-        Assert.assertEquals(counter - 1, resultLeisure?.counter)
+        val result = viewModel.taskLiveData.getOrAwaitValue()
+        val resultTask = result.findTask(testEntity.id)
+        Assert.assertEquals(counter - 1, resultTask?.counter)
     }
 
-    private fun List<Tree<Leisure>>.assertCounters(shouldBeZero: Boolean) {
+    private fun List<Tree<Task>>.assertCounters(shouldBeZero: Boolean) {
         forEach { tree ->
             Assert.assertEquals(shouldBeZero, tree.value.counter == 0L)
             tree.children().assertCounters(shouldBeZero)
         }
     }
 
-    private fun List<Tree<Leisure>>.findChildren(ancestryStack: Stack<Long>): List<Leisure> {
+    private fun List<Tree<Task>>.findChildren(ancestryStack: Stack<Long>): List<Task> {
         if (ancestryStack.isEmpty()) {
-            val children = mutableListOf<Leisure>()
+            val children = mutableListOf<Task>()
             forEach {
                 children.add(it.value)
             }
@@ -153,26 +153,26 @@ class LeisureDataViewModelTest : DbRelatedTest() {
         throw NoSuchElementException("Can't find entity with id $ancestry")
     }
 
-    private fun List<Tree<Leisure>>.findLeisure(parentRootId: Long, leisureId: Long): Leisure? {
+    private fun List<Tree<Task>>.findTask(parentRootId: Long, taskId: Long): Task? {
         forEach { tree ->
             if (tree.value.id == parentRootId) {
-                return@findLeisure tree.children().findLeisure(leisureId)
+                return@findTask tree.children().findTask(taskId)
             }
         }
         return null
     }
 
-    private fun List<Tree<Leisure>>.findLeisure(leisureId: Long): Leisure? {
+    private fun List<Tree<Task>>.findTask(taskId: Long): Task? {
         forEach { tree ->
-            return@findLeisure if (tree.value.id == leisureId)
+            return@findTask if (tree.value.id == taskId)
                 tree.value
             else
-                tree.children().findLeisure(leisureId)
+                tree.children().findTask(taskId)
         }
         return null
     }
 
-    private fun genericLeisure() = LeisureEntity(
+    private fun genericTask() = TaskEntity(
         id = 1L,
         name = "generic",
         counter = 1L,

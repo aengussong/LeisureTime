@@ -1,7 +1,7 @@
 package com.aengussong.prioritytime
 
-import com.aengussong.prioritytime.data.local.LeisureDb
-import com.aengussong.prioritytime.data.local.dao.LeisureDao
+import com.aengussong.prioritytime.data.local.TasksDb
+import com.aengussong.prioritytime.data.local.dao.TasksDao
 import com.aengussong.prioritytime.util.DatabaseManager
 import com.aengussong.prioritytime.util.rule.InMemoryDatabaseRule
 import org.junit.After
@@ -16,9 +16,9 @@ open class DbRelatedTest : KoinTest {
         val inMemoryRule = InMemoryDatabaseRule()
     }
 
-    private val db: LeisureDb by inject()
-    private val leisureDao: LeisureDao by inject()
-    protected val databaseManager = DatabaseManager(leisureDao)
+    private val db: TasksDb by inject()
+    private val tasksDao: TasksDao by inject()
+    protected val databaseManager = DatabaseManager(tasksDao)
 
     @After
     fun cleanDb() {

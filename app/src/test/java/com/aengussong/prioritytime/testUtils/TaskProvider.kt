@@ -1,10 +1,10 @@
 package com.aengussong.prioritytime.testUtils
 
-import com.aengussong.prioritytime.data.local.entity.LeisureEntity
+import com.aengussong.prioritytime.data.local.entity.TaskEntity
 import com.aengussong.prioritytime.util.AncestryBuilder
 import java.util.*
 
-class LeisureProvider() {
+class TaskProvider() {
     val rootAncestry = AncestryBuilder().toString()
     val id_largestCounter = 2L
     val id_recentlyUpdated = 3L
@@ -17,14 +17,14 @@ class LeisureProvider() {
     val longAgo = Calendar.getInstance().apply { set(Calendar.HOUR_OF_DAY, -1) }.time
 
     fun getLargestCounterEntity(ancestry: String = rootAncestry) =
-        LeisureEntity(id_largestCounter, "largest", counter_largest, recently, ancestry)
+        TaskEntity(id_largestCounter, "largest", counter_largest, recently, ancestry)
 
     fun getRecentlyUpdatedEntity(
         isEqualCounter: Boolean = false,
         ancestry: String = rootAncestry
-    ): LeisureEntity {
+    ): TaskEntity {
         val counter = if (isEqualCounter) counter_equal else counter_recentlyUpdated
-        return LeisureEntity(
+        return TaskEntity(
             id_recentlyUpdated,
             "recently",
             counter,
@@ -36,9 +36,9 @@ class LeisureProvider() {
     fun getLongAgoUpdatedEntity(
         isEqualCounter: Boolean = false,
         ancestry: String = rootAncestry
-    ): LeisureEntity {
+    ): TaskEntity {
         val counter = if (isEqualCounter) counter_equal else counter_longAgoUpdated
-        return LeisureEntity(
+        return TaskEntity(
             id_longAgoUpdated,
             "longAgo",
             counter,
@@ -49,10 +49,10 @@ class LeisureProvider() {
 
     companion object {
         /**
-         * @returns the most generic leisure entity, which should not be used in batch operations
+         * @returns the most generic task entity, which should not be used in batch operations
          * with another entities due to possible id conflict
          * */
         fun getGenericEntity() =
-            LeisureEntity(1L, "generic", 0, Date(), AncestryBuilder().toString())
+            TaskEntity(1L, "generic", 0, Date(), AncestryBuilder().toString())
     }
 }

@@ -2,15 +2,15 @@ package com.aengussong.prioritytime.adapter
 
 import android.view.View
 import com.aengussong.prioritytime.R
-import com.aengussong.prioritytime.model.Leisure
+import com.aengussong.prioritytime.model.Task
 import com.aengussong.prioritytime.util.extention.sendAsync
-import kotlinx.android.synthetic.main.item_leisure.view.*
+import kotlinx.android.synthetic.main.item_task.view.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
 import tellh.com.recyclertreeview_lib.TreeNode
 import tellh.com.recyclertreeview_lib.TreeViewBinder
 
-class LeisureBinder : TreeViewBinder<LeisureBinder.LeisureViewHolder>() {
+class TaskBinder : TreeViewBinder<TaskBinder.TaskViewHolder>() {
 
     private val itemClickChannel = Channel<Long>()
     private val itemLongClickChannel = Channel<Long>()
@@ -19,16 +19,16 @@ class LeisureBinder : TreeViewBinder<LeisureBinder.LeisureViewHolder>() {
 
     fun getItemLongClickChannel(): ReceiveChannel<Long> = itemLongClickChannel
 
-    override fun bindView(holder: LeisureViewHolder?, position: Int, node: TreeNode<*>?) {
-        val content = node?.content as Leisure
+    override fun bindView(holder: TaskViewHolder?, position: Int, node: TreeNode<*>?) {
+        val content = node?.content as Task
         holder?.bind(content)
     }
 
-    override fun getLayoutId() = R.layout.item_leisure
+    override fun getLayoutId() = R.layout.item_task
 
-    override fun provideViewHolder(itemView: View?) = LeisureViewHolder(itemView).apply {
+    override fun provideViewHolder(itemView: View?) = TaskViewHolder(itemView).apply {
         itemView?.let { view ->
-            view.leisure_add?.setOnClickListener { _ ->
+            view.task_add?.setOnClickListener { _ ->
                 view.sendAsync(itemClickChannel, content?.id)
             }
             view.setOnLongClickListener { _ ->
@@ -38,12 +38,12 @@ class LeisureBinder : TreeViewBinder<LeisureBinder.LeisureViewHolder>() {
         }
     }
 
-    class LeisureViewHolder(
-        private val view: View?, var content: Leisure? = null
+    class TaskViewHolder(
+        private val view: View?, var content: Task? = null
     ) : TreeViewBinder.ViewHolder(view) {
 
-        fun bind(content: Leisure) {
-            this.view?.leisure_name?.text = content.name
+        fun bind(content: Task) {
+            this.view?.task_name?.text = content.name
             this.content = content
         }
     }

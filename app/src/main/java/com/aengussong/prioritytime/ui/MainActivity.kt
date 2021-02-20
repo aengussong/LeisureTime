@@ -9,8 +9,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.aengussong.prioritytime.R
-import com.aengussong.prioritytime.adapter.LeisureBinder
-import com.aengussong.prioritytime.model.Leisure
+import com.aengussong.prioritytime.adapter.TaskBinder
+import com.aengussong.prioritytime.model.Task
 import com.aengussong.prioritytime.util.Tree
 import com.aengussong.prioritytime.util.extention.doWhileActive
 import kotlinx.android.synthetic.main.activity_main.*
@@ -26,9 +26,9 @@ class MainActivity : BaseDataActivity() {
         setContentView(R.layout.activity_main)
 
         setUpRecyclerView()
-        fab.setOnClickListener { showAddLeisureDialog() }
+        fab.setOnClickListener { showAddTaskDialog() }
 
-        viewModel.leisureLiveData.observe(this, Observer {
+        viewModel.taskLiveData.observe(this, Observer {
             displayTree(it)
         })
     }
@@ -50,12 +50,12 @@ class MainActivity : BaseDataActivity() {
         startActivity(NodeDetailsActivity.getIntent(this, id))
 
     private fun onAddSubNodeClick(parentId: Long) =
-        showAddLeisureDialog(parentId)
+        showAddTaskDialog(parentId)
 
-    private fun displayTree(list: List<Tree<Leisure>>) {
+    private fun displayTree(list: List<Tree<Task>>) {
         val nodes = arrayListOf<TreeNode<*>>()
 
-        fun addNode(parent: TreeNode<*>, list: List<Tree<Leisure>>) {
+        fun addNode(parent: TreeNode<*>, list: List<Tree<Task>>) {
             list.forEach { tree ->
                 val childNode = TreeNode(tree.value).apply { toggle() }
                 parent.addChild(childNode)
@@ -80,7 +80,7 @@ class MainActivity : BaseDataActivity() {
 
     private fun setUpRecyclerView() {
         val nodes = arrayListOf<TreeNode<*>>()
-        val binder = LeisureBinder()
+        val binder = TaskBinder()
         lifecycleScope.doWhileActive {
             val clickedId = binder.getItemClickChannel().receive()
             onAddSubNodeClick(clickedId)
@@ -101,7 +101,7 @@ class MainActivity : BaseDataActivity() {
                     node: TreeNode<*>?,
                     holder: RecyclerView.ViewHolder?
                 ): Boolean {
-                    viewModel.incrementCounter((node?.content as Leisure).id)
+                    viewModel.incrementCounter((node?.content as Task).id)
                     return true
                 }
 
@@ -110,19 +110,19 @@ class MainActivity : BaseDataActivity() {
                 }
             })
 
-            setStableItemIdProvider { node: TreeNode<*>? -> (node?.content as Leisure).id }
+            setStableItemIdProvider { node: TreeNode<*>? -> (node?.content as Task).id }
 
             rv.adapter = this
         }
     }
 
-    private fun showAddLeisureDialog(parentId: Long? = null) {
+    private fun showAddTaskDialog(parentId: Long? = null) {
         val input = EditText(this).apply { setSingleLine() }
         AlertDialog.Builder(this)
-            .setTitle(R.string.add_leisure)
+            .setTitle(R.string.add_task)
             .setView(input)
             .setPositiveButton(android.R.string.ok) { _, _ ->
-                viewModel.addLeisure(
+                viewModel.addTask(
                     input.text.toString(),
                     parentId
                 )

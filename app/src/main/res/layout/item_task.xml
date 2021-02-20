@@ -17,19 +17,19 @@
         tools:ignore="UselessParent">
 
         <ImageView
-            android:id="@+id/leisure_add"
+            android:id="@+id/task_add"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/add_leisure_cd"
+            android:contentDescription="@string/add_task_cd"
             android:padding="@dimen/padding_normal"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_add"
-            app:layout_constraintBottom_toBottomOf="@id/leisure_name"
+            app:layout_constraintBottom_toBottomOf="@id/task_name"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/leisure_name" />
+            app:layout_constraintTop_toTopOf="@id/task_name" />
 
         <TextView
-            android:id="@+id/leisure_name"
+            android:id="@+id/task_name"
             style="@style/NodeText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

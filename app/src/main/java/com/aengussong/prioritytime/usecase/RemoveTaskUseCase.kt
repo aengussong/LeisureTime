@@ -1,18 +1,18 @@
 package com.aengussong.prioritytime.usecase
 
-import com.aengussong.prioritytime.data.LeisureRepository
+import com.aengussong.prioritytime.data.TaskRepository
 import com.aengussong.prioritytime.util.AncestryBuilder
 
-class RemoveLeisureUseCase(private val repo: LeisureRepository) {
+class RemoveTaskUseCase(private val repo: TaskRepository) {
 
     suspend fun execute(id: Long) {
         val ancestry = repo.getAncestry(id)
 
-        //remove children of leisure
+        //remove children of task
         val childrenAncestry = AncestryBuilder(ancestry).withChild(id).toString()
-        repo.removeLeisures(childrenAncestry)
+        repo.removeTasks(childrenAncestry)
 
-        //remove leisure
-        repo.removeLeisure(id)
+        //remove task
+        repo.removeTask(id)
     }
 }

@@ -1,8 +1,8 @@
 package com.aengussong.prioritytime.data
 
 import com.aengussong.prioritytime.data.local.SharedPrefs
-import com.aengussong.prioritytime.data.local.dao.LeisureDao
-import com.aengussong.prioritytime.data.local.entity.LeisureEntity
+import com.aengussong.prioritytime.data.local.dao.TasksDao
+import com.aengussong.prioritytime.data.local.entity.TaskEntity
 import com.aengussong.prioritytime.model.SortOrder
 import com.aengussong.prioritytime.util.ROOT_ANCESTRY
 import kotlinx.coroutines.CoroutineScope
@@ -13,13 +13,13 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.withContext
 import org.koin.core.KoinComponent
 
-class LeisureRepositoryImpl(
-    private val localProvider: LeisureDao,
+class TaskRepositoryImpl(
+    private val localProvider: TasksDao,
     private val prefs: SharedPrefs
-) : LeisureRepository, KoinComponent {
+) : TaskRepository, KoinComponent {
 
-    override suspend fun addLeisure(leisure: LeisureEntity) = onIO {
-        localProvider.addLeisure(leisure)
+    override suspend fun addTask(task: TaskEntity) = onIO {
+        localProvider.addTask(task)
     }
 
     /**
@@ -33,39 +33,39 @@ class LeisureRepositoryImpl(
         localProvider.getAncestry(id)
     }
 
-    override fun getHierarchialLeisures(): Flow<List<LeisureEntity>> {
-        return localProvider.getHierarchialLeisures()
+    override fun getHierarchialTasks(): Flow<List<TaskEntity>> {
+        return localProvider.getHierarchialTasks()
     }
 
-    override fun getLinearLeisures(): Flow<List<LeisureEntity>> {
-        return localProvider.getLinearLeisures()
+    override fun getLinearTasks(): Flow<List<TaskEntity>> {
+        return localProvider.getLinearTasks()
     }
 
-    override suspend fun getLeisure(id: Long): LeisureEntity = onIO {
-        localProvider.getLeisure(id)
+    override suspend fun getTask(id: Long): TaskEntity = onIO {
+        localProvider.getTask(id)
     }
 
-    override suspend fun incrementLeisures(ids: List<Long>) = onIO {
-        localProvider.incrementLeisures(ids)
+    override suspend fun incrementTasks(ids: List<Long>) = onIO {
+        localProvider.incrementTasks(ids)
     }
 
-    override suspend fun renameLeisure(id: Long, newName: String) = onIO {
-        localProvider.renameLeisure(id, newName)
+    override suspend fun renameTask(id: Long, newName: String) = onIO {
+        localProvider.renameTask(id, newName)
     }
 
-    override suspend fun removeLeisure(id: Long) = onIO {
-        localProvider.removeLeisure(id)
+    override suspend fun removeTask(id: Long) = onIO {
+        localProvider.removeTask(id)
     }
 
-    override suspend fun removeLeisures(ancestry: String) = onIO {
-        localProvider.removeLeisures(ancestry)
+    override suspend fun removeTasks(ancestry: String) = onIO {
+        localProvider.removeTasks(ancestry)
     }
 
     override suspend fun dropCounters() = onIO {
         localProvider.dropCounters()
     }
 
-    override suspend fun getLeisureCounter(id: Long) = onIO {
+    override suspend fun getTaskCounter(id: Long) = onIO {
         localProvider.getCounter(id)
     }
 
@@ -73,9 +73,9 @@ class LeisureRepositoryImpl(
         localProvider.updateCounter(id, counter)
     }
 
-    override fun observeLeisure(id: Long) = localProvider.observeLeisureDistinct(id)
+    override fun observeTask(id: Long) = localProvider.observeTaskDistinct(id)
 
-    override fun observeMinLeisure(): Flow<LeisureEntity?> {
+    override fun observeMinTask(): Flow<TaskEntity?> {
         return getSortOrder().flatMapLatest { order ->
             when (order) {
                 SortOrder.HIERARCHY -> localProvider.observeMinHierarchial(ROOT_ANCESTRY)
@@ -84,7 +84,7 @@ class LeisureRepositoryImpl(
         }
     }
 
-    override suspend fun getMinLeisure(): LeisureEntity? {
+    override suspend fun getMinTask(): TaskEntity? {
         return when (prefs.getSortOrder()) {
             SortOrder.HIERARCHY -> localProvider.getMinHierarchial(ROOT_ANCESTRY)
             SortOrder.LINEAR -> localProvider.getMinLinear()

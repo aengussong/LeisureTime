@@ -7,7 +7,7 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.lifecycle.lifecycleScope
 import com.aengussong.prioritytime.R
-import com.aengussong.prioritytime.data.local.entity.LeisureEntity
+import com.aengussong.prioritytime.data.local.entity.TaskEntity
 import com.aengussong.prioritytime.util.extention.hide
 import com.aengussong.prioritytime.util.extention.setOnEditorActionListener
 import com.aengussong.prioritytime.util.extention.show
@@ -18,38 +18,38 @@ import kotlinx.coroutines.flow.onEach
 import java.text.SimpleDateFormat
 import java.util.*
 
-private const val KEY_LEISURE_ID = "key_leisure"
+private const val KEY_TASK_ID = "key_task"
 
 class NodeDetailsActivity : BaseDataActivity() {
 
     private val formatter = SimpleDateFormat("dd MMMM", Locale.getDefault())
 
     companion object {
-        fun getIntent(context: Context, leisureId: Long) =
+        fun getIntent(context: Context, taskId: Long) =
             Intent(context, NodeDetailsActivity::class.java).apply {
-                putExtra(KEY_LEISURE_ID, leisureId)
+                putExtra(KEY_TASK_ID, taskId)
             }
     }
 
-    private val leisureId: Long by lazy { intent.getLongExtra(KEY_LEISURE_ID, -1L) }
+    private val taskId: Long by lazy { intent.getLongExtra(KEY_TASK_ID, -1L) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_node_details)
 
-        viewModel.observeLeisure(leisureId).filterNotNull().onEach { leisure: LeisureEntity ->
-            node_name.text = leisure.name
-            node_counter.text = resources.getString(R.string.counter_times, leisure.counter)
+        viewModel.observeTask(taskId).filterNotNull().onEach { task: TaskEntity ->
+            node_name.text = task.name
+            node_counter.text = resources.getString(R.string.counter_times, task.counter)
             node_updated.text =
-                resources.getString(R.string.last_updated, formatter.format(leisure.updated))
+                resources.getString(R.string.last_updated, formatter.format(task.updated))
         }.launchIn(lifecycleScope)
 
         delete.setOnClickListener {
-            viewModel.removeEntity(leisureId)
+            viewModel.removeEntity(taskId)
             onBackPressed()
         }
 
-        decrement.setOnClickListener { viewModel.decrementLeisure(leisureId) }
+        decrement.setOnClickListener { viewModel.decrementTask(taskId) }
 
         node_name.setOnClickListener {
             setTitleEditing(true)
@@ -58,7 +58,7 @@ class NodeDetailsActivity : BaseDataActivity() {
         node_name_et.setOnEditorActionListener(EditorInfo.IME_ACTION_DONE) {
             setTitleEditing(false)
             if (!it.text.isNullOrEmpty()) {
-                viewModel.renameLeisure(leisureId, it.text.toString())
+                viewModel.renameTask(taskId, it.text.toString())
             }
         }
     }

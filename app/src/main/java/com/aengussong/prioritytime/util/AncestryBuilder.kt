@@ -32,7 +32,7 @@ class AncestryBuilder(private var ancestry: String = ROOT_ANCESTRY) {
     fun isRoot() = ancestry == ROOT_ANCESTRY
 
     /**
-     * Returns null if leisure is root entity. [isRoot] should return true in this case
+     * Returns null if task is root entity. [isRoot] should return true in this case
      *
      * @return id for root element, which holds this entity as sub element
      * */

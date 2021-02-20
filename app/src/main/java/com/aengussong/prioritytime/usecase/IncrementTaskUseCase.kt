@@ -1,20 +1,20 @@
 package com.aengussong.prioritytime.usecase
 
-import com.aengussong.prioritytime.data.LeisureRepository
+import com.aengussong.prioritytime.data.TaskRepository
 import com.aengussong.prioritytime.util.AncestryBuilder
 
-class IncrementLeisureUseCase(private val repo: LeisureRepository) {
+class IncrementTaskUseCase(private val repo: TaskRepository) {
 
     suspend fun execute(id: Long) {
-        val entity = repo.getLeisure(id)
+        val entity = repo.getTask(id)
         val idsToIncrement =
             AncestryBuilder(entity.ancestry).withChild(entity.id).getAncestryIds()
 
-        repo.incrementLeisures(idsToIncrement)
+        repo.incrementTasks(idsToIncrement)
     }
 
-    suspend fun incrementMinLeisure() {
-        repo.getMinLeisure()?.id?.let {
+    suspend fun incrementMinTask() {
+        repo.getMinTask()?.id?.let {
             execute(it)
         }
     }

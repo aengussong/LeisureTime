@@ -7,8 +7,8 @@ import kotlinx.android.parcel.Parcelize
 import java.util.*
 
 @Parcelize
-@Entity
-data class LeisureEntity(
+@Entity(tableName = "Tasks")
+data class  TaskEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0L,
     val name: String,
@@ -21,9 +21,9 @@ data class LeisureEntity(
      */
     val ancestry: String
 ) : Parcelable {
-    constructor(leisureName: String, leisureCount: Long, leisureAncestry: String) : this(
-        name = leisureName,
-        counter = leisureCount,
-        ancestry = leisureAncestry
+    constructor(taskName: String, taskCount: Long, taskAncestry: String) : this(
+        name = taskName,
+        counter = taskCount,
+        ancestry = taskAncestry
     )
 }

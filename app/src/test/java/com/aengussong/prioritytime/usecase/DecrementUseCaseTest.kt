@@ -1,6 +1,6 @@
 package com.aengussong.prioritytime.usecase
 
-import com.aengussong.prioritytime.data.LeisureRepository
+import com.aengussong.prioritytime.data.TaskRepository
 import io.mockk.*
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert
@@ -8,7 +8,7 @@ import org.junit.Test
 
 internal class DecrementUseCaseTest {
 
-    private val repo = mockk<LeisureRepository>()
+    private val repo = mockk<TaskRepository>()
     private val useCase = DecrementUseCase(repo)
 
     @Test
@@ -36,7 +36,7 @@ internal class DecrementUseCaseTest {
     }
 
     private fun setUpTest(id: Long, counter: Long, counterCapture: CapturingSlot<Long>) {
-        coEvery { repo.getLeisureCounter(id) } returns counter
+        coEvery { repo.getTaskCounter(id) } returns counter
         coEvery { repo.setCounter(id, capture(counterCapture)) } just Runs
     }
 }

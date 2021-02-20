@@ -1,13 +1,13 @@
 package com.aengussong.prioritytime.usecase
 
-import com.aengussong.prioritytime.data.LeisureRepository
+import com.aengussong.prioritytime.data.TaskRepository
 
-class DecrementUseCase(private val repo: LeisureRepository) {
+class DecrementUseCase(private val repo: TaskRepository) {
 
-    suspend fun execute(leisureId: Long) {
-        repo.getLeisureCounter(leisureId).also {
+    suspend fun execute(taskId: Long) {
+        repo.getTaskCounter(taskId).also {
             if (it > 0L) {
-                repo.setCounter(leisureId, it - 1)
+                repo.setCounter(taskId, it - 1)
             }
         }
     }
