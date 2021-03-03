@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import com.aengussong.prioritytime.R
 import com.aengussong.prioritytime.data.local.entity.TaskEntity
@@ -45,8 +46,7 @@ class NodeDetailsActivity : BaseDataActivity() {
         }.launchIn(lifecycleScope)
 
         delete.setOnClickListener {
-            viewModel.removeEntity(taskId)
-            onBackPressed()
+            showDeleteDialog()
         }
 
         decrement.setOnClickListener { viewModel.decrementTask(taskId) }
@@ -82,5 +82,16 @@ class NodeDetailsActivity : BaseDataActivity() {
             //hide keyboard
             imm.hideSoftInputFromWindow(node_name_et.windowToken, 0)
         }
+    }
+
+    private fun showDeleteDialog() {
+        AlertDialog.Builder(this)
+            .setTitle(R.string.title_remove_item)
+            .setPositiveButton(android.R.string.ok) { _, _ ->
+                viewModel.removeEntity(taskId)
+                onBackPressed()
+            }
+            .setNegativeButton(android.R.string.cancel) { dialog, _ -> dialog.cancel() }
+            .show()
     }
 }
