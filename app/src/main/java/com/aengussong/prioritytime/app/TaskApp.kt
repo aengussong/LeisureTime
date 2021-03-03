@@ -7,7 +7,6 @@ import com.aengussong.prioritytime.di.dbModule
 import com.aengussong.prioritytime.di.viewModelModule
 import com.aengussong.prioritytime.usecase.GetTaskUseCase
 import com.aengussong.prioritytime.widget.PriorityWidgetProvider
-import com.facebook.stetho.Stetho
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -28,7 +27,6 @@ class TaskApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        Stetho.initializeWithDefaults(this)
 
         startKoin {
             androidContext(this@TaskApp)
