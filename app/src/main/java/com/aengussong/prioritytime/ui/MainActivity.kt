@@ -39,11 +39,17 @@ class MainActivity : BaseDataActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.main_sort) {
-            viewModel.toggleSort()
-            return true
+        return when (item.itemId) {
+            R.id.main_sort -> {
+                viewModel.toggleSort()
+                true
+            }
+            R.id.main_erase -> {
+                showClearCountersDialog()
+                true
+            }
+            else -> false
         }
-        return false
     }
 
     private fun onNodeLongCLick(id: Long) =
@@ -106,7 +112,7 @@ class MainActivity : BaseDataActivity() {
                 }
 
                 override fun onToggle(p0: Boolean, p1: RecyclerView.ViewHolder?) {
-                    TODO("Not yet implemented")
+                    // noop
                 }
             })
 
@@ -126,6 +132,16 @@ class MainActivity : BaseDataActivity() {
                     input.text.toString(),
                     parentId
                 )
+            }
+            .setNegativeButton(android.R.string.cancel) { dialog, _ -> dialog.cancel() }
+            .show()
+    }
+
+    private fun showClearCountersDialog() {
+        AlertDialog.Builder(this)
+            .setTitle(R.string.title_clear_all_counters)
+            .setPositiveButton(android.R.string.ok) { _, _ ->
+                viewModel.dropCounters()
             }
             .setNegativeButton(android.R.string.cancel) { dialog, _ -> dialog.cancel() }
             .show()
