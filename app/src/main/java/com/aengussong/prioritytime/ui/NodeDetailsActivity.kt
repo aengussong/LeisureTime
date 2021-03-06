@@ -9,10 +9,10 @@ import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import com.aengussong.prioritytime.R
 import com.aengussong.prioritytime.data.local.entity.TaskEntity
+import com.aengussong.prioritytime.databinding.ActivityNodeDetailsBinding
 import com.aengussong.prioritytime.util.extention.hide
 import com.aengussong.prioritytime.util.extention.setOnEditorActionListener
 import com.aengussong.prioritytime.util.extention.show
-import kotlinx.android.synthetic.main.activity_node_details.*
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -25,6 +25,8 @@ class NodeDetailsActivity : BaseDataActivity() {
 
     private val formatter = SimpleDateFormat("dd MMMM", Locale.getDefault())
 
+    private lateinit var binding: ActivityNodeDetailsBinding
+
     companion object {
         fun getIntent(context: Context, taskId: Long) =
             Intent(context, NodeDetailsActivity::class.java).apply {
@@ -36,26 +38,27 @@ class NodeDetailsActivity : BaseDataActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_node_details)
+        binding = ActivityNodeDetailsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         viewModel.observeTask(taskId).filterNotNull().onEach { task: TaskEntity ->
-            node_name.text = task.name
-            node_counter.text = resources.getString(R.string.counter_times, task.counter)
-            node_updated.text =
+            binding.nodeName.text = task.name
+            binding.nodeCounter.text = resources.getString(R.string.counter_times, task.counter)
+            binding.nodeUpdated.text =
                 resources.getString(R.string.last_updated, formatter.format(task.updated))
         }.launchIn(lifecycleScope)
 
-        delete.setOnClickListener {
+        binding.delete.setOnClickListener {
             showDeleteDialog()
         }
 
-        decrement.setOnClickListener { viewModel.decrementTask(taskId) }
+        binding.decrement.setOnClickListener { viewModel.decrementTask(taskId) }
 
-        node_name.setOnClickListener {
+        binding.nodeName.setOnClickListener {
             setTitleEditing(true)
         }
 
-        node_name_et.setOnEditorActionListener(EditorInfo.IME_ACTION_DONE) {
+        binding.nodeNameEt.setOnEditorActionListener(EditorInfo.IME_ACTION_DONE) {
             setTitleEditing(false)
             if (!it.text.isNullOrEmpty()) {
                 viewModel.renameTask(taskId, it.text.toString())
@@ -66,21 +69,21 @@ class NodeDetailsActivity : BaseDataActivity() {
     private fun setTitleEditing(isEditing: Boolean) {
         val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         if (isEditing) {
-            val nodeTitle = node_name.text.toString()
-            node_name_et.setText(nodeTitle)
-            node_name_et.show()
-            node_name_et.requestFocus()
-            node_name.hide()
+            val nodeTitle = binding.nodeName.text.toString()
+            binding.nodeNameEt.setText(nodeTitle)
+            binding.nodeNameEt.show()
+            binding.nodeNameEt.requestFocus()
+            binding.nodeName.hide()
 
             //show keyboard
-            node_name_et.isFocusableInTouchMode = true
-            imm.showSoftInput(node_name_et, 0)
+            binding.nodeNameEt.isFocusableInTouchMode = true
+            imm.showSoftInput(binding.nodeNameEt, 0)
         } else {
-            node_name_et.hide()
-            node_name.show()
+            binding.nodeNameEt.hide()
+            binding.nodeName.show()
 
             //hide keyboard
-            imm.hideSoftInputFromWindow(node_name_et.windowToken, 0)
+            imm.hideSoftInputFromWindow(binding.nodeNameEt.windowToken, 0)
         }
     }
 
