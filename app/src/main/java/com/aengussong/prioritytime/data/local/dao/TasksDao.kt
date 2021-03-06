@@ -17,7 +17,7 @@ interface TasksDao {
     @Query("SELECT * FROM tasks ORDER BY ancestry")
     fun getHierarchialTasks(): Flow<List<TaskEntity>>
 
-    @Query("SELECT * FROM tasks ORDER BY counter")
+    @Query("SELECT * FROM tasks ORDER BY counter, updated")
     fun getLinearTasks  (): Flow<List<TaskEntity>>
 
     /**
