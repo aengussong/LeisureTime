@@ -10,10 +10,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.aengussong.prioritytime.R
 import com.aengussong.prioritytime.adapter.TaskBinder
+import com.aengussong.prioritytime.databinding.ActivityMainBinding
 import com.aengussong.prioritytime.model.Task
 import com.aengussong.prioritytime.util.Tree
 import com.aengussong.prioritytime.util.extention.doWhileActive
-import kotlinx.android.synthetic.main.activity_main.*
 import tellh.com.recyclertreeview_lib.TreeNode
 import tellh.com.recyclertreeview_lib.TreeViewAdapter
 
@@ -21,12 +21,15 @@ class MainActivity : BaseDataActivity() {
 
     private lateinit var adapter: TreeViewAdapter
 
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         setUpRecyclerView()
-        fab.setOnClickListener { showAddTaskDialog() }
+        binding.fab.setOnClickListener { showAddTaskDialog() }
 
         viewModel.taskLiveData.observe(this, Observer {
             displayTree(it)
@@ -79,9 +82,9 @@ class MainActivity : BaseDataActivity() {
         item movement, so it autoscrolls to the new position of the first element. To prevent
         this behaviour saving state before changes and restoring it after was implemented,
         preventing ANY autoscrolling from happening. */
-        val lmState = rv.layoutManager?.onSaveInstanceState()
+        val lmState = binding.rv.layoutManager?.onSaveInstanceState()
         adapter.refresh(nodes)
-        rv.layoutManager?.onRestoreInstanceState(lmState)
+        binding.rv.layoutManager?.onRestoreInstanceState(lmState)
     }
 
     private fun setUpRecyclerView() {
@@ -118,7 +121,7 @@ class MainActivity : BaseDataActivity() {
 
             setStableItemIdProvider { node: TreeNode<*>? -> (node?.content as Task).id }
 
-            rv.adapter = this
+            binding.rv.adapter = this
         }
     }
 
