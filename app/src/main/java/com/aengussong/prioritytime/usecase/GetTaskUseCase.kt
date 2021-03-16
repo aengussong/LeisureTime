@@ -75,11 +75,11 @@ class GetTaskUseCase(private val repo: TaskRepository) : Mapper() {
      * important comparable value, two items compared by date only if they have the same counter.
      * */
     private val treeComparator = Comparator<Tree<Task>> { tree1, tree2 ->
-        val counterDiff = tree1.value.counter - tree2.value.counter
-        return@Comparator if (counterDiff == 0L) {
-            tree1.value.updated.time - tree2.value.updated.time
+        val counterDiff = tree1.value.counter.compareTo(tree2.value.counter)
+        return@Comparator if (counterDiff == 0) {
+            tree1.value.updated.time.compareTo(tree2.value.updated.time)
         } else {
             counterDiff
-        }.toInt()
+        }
     }
 }
