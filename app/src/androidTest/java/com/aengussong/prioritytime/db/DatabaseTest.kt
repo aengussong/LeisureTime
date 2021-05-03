@@ -11,7 +11,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Assert
 import org.junit.Rule
 import org.junit.Test
-import org.koin.core.inject
+import org.koin.core.component.inject
 
 class DatabaseTest : DbRelatedTest() {
 

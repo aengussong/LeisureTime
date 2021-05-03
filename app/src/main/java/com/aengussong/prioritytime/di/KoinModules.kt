@@ -8,6 +8,8 @@ import com.aengussong.prioritytime.data.local.MIGRATION_1_2
 import com.aengussong.prioritytime.data.local.SharedPrefs
 import com.aengussong.prioritytime.data.local.TasksDb
 import com.aengussong.prioritytime.usecase.*
+import com.aengussong.prioritytime.usecase.periodicErase.GetPeriodicEraseUseCase
+import com.aengussong.prioritytime.usecase.periodicErase.StartPeriodicEraseUseCase
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -34,8 +36,10 @@ val dataModule = module {
     single { DecrementUseCase(get()) }
     single { SortOrderUseCase(get()) }
     single { SharedPrefs(get()) }
+    factory { StartPeriodicEraseUseCase(get(), get()) }
+    factory {GetPeriodicEraseUseCase(get())}
 }
 
 val viewModelModule = module {
-    viewModel { TaskDataViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
+    viewModel { TaskDataViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
 }

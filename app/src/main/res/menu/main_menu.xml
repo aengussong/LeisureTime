@@ -3,12 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/main_erase"
-        android:icon="@drawable/ic_erase"
-        android:title="@string/menu_erase"
-        app:showAsAction="ifRoom" />
-
-    <item
         android:id="@+id/main_sort"
         android:icon="@drawable/ic_sort"
         android:title="@string/menu_sort"

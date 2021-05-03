@@ -5,18 +5,19 @@ import com.aengussong.prioritytime.data.local.dao.TasksDao
 import com.aengussong.prioritytime.data.local.entity.TaskEntity
 import com.aengussong.prioritytime.model.SortOrder
 import com.aengussong.prioritytime.util.ROOT_ANCESTRY
+import com.aengussong.prioritytime.worker.Work
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.withContext
-import org.koin.core.KoinComponent
 
 class TaskRepositoryImpl(
     private val localProvider: TasksDao,
     private val prefs: SharedPrefs
-) : TaskRepository, KoinComponent {
+) : TaskRepository {
 
     override suspend fun addTask(task: TaskEntity) = onIO {
         localProvider.addTask(task)
@@ -102,6 +103,15 @@ class TaskRepositoryImpl(
 
     override fun getSortOrder(): Flow<SortOrder> {
         return prefs.observeSortOrder()
+    }
+
+    override suspend fun saveEraseOption(work: Work): Unit = onIO {
+        prefs.saveEraseOption(work)
+    }
+
+    @ExperimentalCoroutinesApi
+    override fun getEraseOption(): Flow<Work> {
+        return prefs.getEraseOptionFlow()
     }
 
     private suspend fun <T> onIO(block: suspend CoroutineScope.() -> T) =

@@ -8,6 +8,6 @@ import org.koin.core.context.loadKoinModules
 class InMemoryDatabaseRule : TestWatcher() {
 
     override fun starting(description: Description?) {
-        loadKoinModules(inMemoryDb)
+        loadKoinModules(listOf(inMemoryDb))
     }
 }

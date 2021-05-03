@@ -8,6 +8,7 @@ import com.aengussong.prioritytime.util.AncestryBuilder
 import com.aengussong.prioritytime.util.Tree
 import com.aengussong.prioritytime.util.getOrAwaitValue
 import kotlinx.coroutines.*
+import org.junit.After
 import org.junit.Assert
 import org.junit.Test
 import org.koin.test.get
@@ -20,6 +21,11 @@ import kotlin.NoSuchElementException
 class TaskDataViewModelTest : DbRelatedTest() {
 
     private val viewModel: TaskDataViewModel by inject()
+
+    @After
+    fun tearDown(): Unit = runBlocking {
+        databaseManager.clearDb()
+    }
 
     @Test
     fun startViewModel_dataShouldBeLoaded() = runBlocking {

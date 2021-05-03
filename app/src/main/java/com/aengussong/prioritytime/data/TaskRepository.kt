@@ -2,6 +2,7 @@ package com.aengussong.prioritytime.data
 
 import com.aengussong.prioritytime.data.local.entity.TaskEntity
 import com.aengussong.prioritytime.model.SortOrder
+import com.aengussong.prioritytime.worker.Work
 import kotlinx.coroutines.flow.Flow
 
 interface TaskRepository {
@@ -23,4 +24,7 @@ interface TaskRepository {
     fun observeMinTask(): Flow<TaskEntity?>
     fun toggleSort()
     fun getSortOrder(): Flow<SortOrder>
+
+    suspend fun saveEraseOption(work: Work)
+    fun getEraseOption(): Flow<Work>
 }
