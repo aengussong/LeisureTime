@@ -8,8 +8,11 @@
     <string name="counter_times">Counter: %d</string>
     <string name="last_updated">Last updated: %s</string>
     <string name="menu_sort">Sort items</string>
-    <string name="menu_erase">Erase all counters</string>
+    <string name="option_erase_counters">Drop all counters</string>
     <string name="empty_list">Add items to the list</string>
     <string name="title_remove_item">Are you sure you want to remove this item?</string>
     <string name="title_clear_all_counters">Are you sure you want to clear all counters?</string>
+    <string name="erase_interval">Erase interval</string>
+    <string name="never_option">Never</string>
+    <string name="monthly_option">Every 30 days</string>
 </resources>

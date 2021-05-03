@@ -2,9 +2,9 @@ package com.aengussong.prioritytime.util
 
 import com.aengussong.prioritytime.data.local.dao.TasksDao
 import com.aengussong.prioritytime.data.local.entity.TaskEntity
-import org.koin.core.KoinComponent
 
-class DatabaseManager(private val tasksDao: TasksDao) : KoinComponent {
+
+class DatabaseManager(private val tasksDao: TasksDao) {
 
     private val rootAncestry = AncestryBuilder()
     private val firstLevelAncestry = rootAncestry.toString()
@@ -85,5 +85,9 @@ class DatabaseManager(private val tasksDao: TasksDao) : KoinComponent {
             children.add(task.copy(id = id))
         }
         return children
+    }
+
+    suspend fun clearDb() {
+        tasksDao.removeTasks(ROOT_ANCESTRY)
     }
 }

@@ -3,17 +3,23 @@ package com.aengussong.prioritytime.ui
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
-import androidx.lifecycle.Observer
+import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.aengussong.prioritytime.R
 import com.aengussong.prioritytime.adapter.TaskBinder
 import com.aengussong.prioritytime.databinding.ActivityMainBinding
 import com.aengussong.prioritytime.model.Task
+import com.aengussong.prioritytime.ui.drawer.SettingsDrawer
 import com.aengussong.prioritytime.util.Tree
 import com.aengussong.prioritytime.util.extention.doWhileActive
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import tellh.com.recyclertreeview_lib.TreeNode
 import tellh.com.recyclertreeview_lib.TreeViewAdapter
 
@@ -23,17 +29,40 @@ class MainActivity : BaseDataActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
+    private val drawerState: MutableStateFlow<Boolean> = MutableStateFlow(false)
+
+    private val isDrawerOpened
+        get() = drawerState.value
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.composeView.setContent {
+            val isOpenState = drawerState.collectAsState(false)
+            SettingsDrawer(isOpenState, ::showClearCountersDialog)
+        }
 
+        setUpMenu()
         setUpRecyclerView()
         binding.fab.setOnClickListener { showAddTaskDialog() }
 
-        viewModel.taskLiveData.observe(this, Observer {
+        viewModel.taskLiveData.observe(this, {
             displayTree(it)
         })
+
+        drawerState.onEach {
+            onDrawerOpened(it)
+        }.launchIn(lifecycleScope)
+    }
+
+    private fun setUpMenu() {
+        supportActionBar?.apply {
+            setHomeButtonEnabled(true)
+            setDisplayHomeAsUpEnabled(true)
+            setHomeAsUpIndicator(R.drawable.ic_menu)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -47,12 +76,38 @@ class MainActivity : BaseDataActivity() {
                 viewModel.toggleSort()
                 true
             }
-            R.id.main_erase -> {
-                showClearCountersDialog()
+            android.R.id.home -> {
+                    if (drawerState.value) {
+                        onBackPressed()
+                    } else {
+                        binding.composeView.visibility = View.VISIBLE
+                        drawerState.value = true
+                    }
                 true
             }
             else -> false
         }
+    }
+
+    override fun onBackPressed() {
+        if (isDrawerOpened && !onBackPressedDispatcher.hasEnabledCallbacks()) {
+            lifecycleScope.launch {
+                drawerState.emit(false)
+            }
+        } else {
+            super.onBackPressed()
+        }
+    }
+
+    private fun onDrawerOpened(wasOpened: Boolean) {
+        binding.rv.visibility = if (wasOpened) {
+            View.GONE
+        } else {
+            View.VISIBLE
+        }
+        val menuIcon = if (wasOpened) R.drawable.ic_back else R.drawable.ic_menu
+        supportActionBar?.setHomeAsUpIndicator(menuIcon)
+        binding.fab.visibility = if (wasOpened) View.GONE else View.VISIBLE
     }
 
     private fun onNodeLongCLick(id: Long) =
@@ -145,6 +200,7 @@ class MainActivity : BaseDataActivity() {
             .setTitle(R.string.title_clear_all_counters)
             .setPositiveButton(android.R.string.ok) { _, _ ->
                 viewModel.dropCounters()
+                drawerState.value = false
             }
             .setNegativeButton(android.R.string.cancel) { dialog, _ -> dialog.cancel() }
             .show()

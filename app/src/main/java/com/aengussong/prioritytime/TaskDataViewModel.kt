@@ -2,10 +2,13 @@ package com.aengussong.prioritytime
 
 import androidx.lifecycle.*
 import com.aengussong.prioritytime.data.local.entity.TaskEntity
-import com.aengussong.prioritytime.model.Task
 import com.aengussong.prioritytime.model.SortOrder
+import com.aengussong.prioritytime.model.Task
 import com.aengussong.prioritytime.usecase.*
+import com.aengussong.prioritytime.usecase.periodicErase.GetPeriodicEraseUseCase
+import com.aengussong.prioritytime.usecase.periodicErase.StartPeriodicEraseUseCase
 import com.aengussong.prioritytime.util.Tree
+import com.aengussong.prioritytime.worker.Work
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -22,7 +25,9 @@ class TaskDataViewModel(
     private val removeTaskUseCase: RemoveTaskUseCase,
     private val dropCountersUseCase: DropCountersUseCase,
     private val decrementUseCase: DecrementUseCase,
-    private val sortOrderUseCase: SortOrderUseCase
+    private val sortOrderUseCase: SortOrderUseCase,
+    private val startEraseUseCase: StartPeriodicEraseUseCase,
+    private val getEraseOptionUseCase: GetPeriodicEraseUseCase
 ) : ViewModel() {
 
     val taskLiveData: LiveData<List<Tree<Task>>>
@@ -76,10 +81,16 @@ class TaskDataViewModel(
         sortOrderUseCase.toggleSortOrder()
     }
 
-    private fun launchWithHandler(block: suspend CoroutineScope.() -> Unit) =
-        viewModelScope.launch(errorHandler, block = block)
-
     fun decrementTask(taskId: Long) = launchWithHandler {
         decrementUseCase.execute(taskId)
     }
+
+    fun launchEraseWorker(work: Work) = launchWithHandler {
+        startEraseUseCase.execute(work)
+    }
+
+    fun getEraseSetting(): Flow<Work> = getEraseOptionUseCase.execute()
+
+    private fun launchWithHandler(block: suspend CoroutineScope.() -> Unit) =
+        viewModelScope.launch(errorHandler, block = block)
 }

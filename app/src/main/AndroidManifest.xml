@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.aengussong.prioritytime">
 
     <application
@@ -34,6 +35,14 @@
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
         <receiver android:name=".widget.PriorityBroadcast" />
+
+        <!-- Disable android.startup completely in order to customize work manager initializer. -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            tools:node="remove"></provider>
+
+
     </application>
 
 </manifest>
